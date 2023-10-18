@@ -2,9 +2,13 @@ from typing import Any
 import scipy
 
 class Compartment():
-    def __init__(self, name, type, volumne, initial_amount, rate_in, rate_out):
-        name, type, volumne = name, type, volumne
-        initial_amount, rate_in, rate_out  =  initial_amount, rate_in, rate_out
+    def __init__(self, name, type, volume, initial_amount, rate_in, rate_out):
+        self.name = name
+        self.type = type
+        self.volume = volume
+        self.initial_amount = initial_amount
+        self.rate_in = rate_in
+        self.rate_out = rate_out
 
 class Model():
     def __init__(self):
