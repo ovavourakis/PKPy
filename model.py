@@ -1,23 +1,37 @@
-from typing import Any
 import scipy
 
 class Compartment():
-    def __init__(self, name, type, volume, initial_amount, rate_in, rate_out):
-        self.name = name
-        self.type = type
-        self.volume = volume
-        self.initial_amount = initial_amount
-        self.rate_in = rate_in
-        self.rate_out = rate_out
+    def __init__(self, compartment_dict): # name, type, volume, initial_amount, rate_in, rate_out):
+        self.name = compartment_dict['name']
+        self.type = compartment_dict['type']
+        self.volume = compartment_dict['volume']
+        self.initial_amount = compartment_dict['initial_amount']
+        self.rate_in = compartment_dict['rate_in']
+        self.rate_out = compartment_dict['rate_out']
 
 class Model():
     def __init__(self):
 
-        dose, subcutaneous, compartments = None # calls the parser
+        parser = Parser()
+        basic_params, compartment_list = parser.construct()
 
-        # turn dictionaries into Compartment() objects
+        # basic parameters
+        self.subcutaneous = basic_params['subcutaneous']
+        self.dose_values = basic_params['dose']['dose_values']
+        self.dose_times = basic_params['dose']['dose_time']
 
+        # create compartment objects
+        self.compartment_list = [Compartment(compartment_dict) for compartment_dict in compartment_list]
+        if subcutaneous:
+            self.central, self.subcutaneous, *self.other_compartments = compartment_list
+        else:
+            self.central, *self.other_compartments = compartment_list
+
+        # compartment terms
+        for C in self.compartment_list:
+            transition = C.rate_in * (self.initiamount/ V_c - q_p1 / V_p1)
         
+
 
         equations = None # do stuff with the compartment objects
 
