@@ -4,9 +4,9 @@
         "dose" : {
             "dose_amount" : [10],
             "dose_time" : [0]
-        },
+        }
     },
-    
+
     "compartment_1" : {
         "name" : "bloodstream",
         "type" : "central",
