@@ -15,6 +15,10 @@ class Model():
 
         dose, subcutaneous, compartments = None # calls the parser
 
+        # turn dictionaries into Compartment() objects
+
+        
+
         equations = None # do stuff with the compartment objects
 
     def solve(self):
