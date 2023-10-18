@@ -1,6 +1,6 @@
-import scipy
+import scipy, numpy
 
-from parser import Parser
+from system_parser import Parser
 
 class Compartment():
     def __init__(self, dict): # name, type, volume, initial_amount, rate_in, rate_out):
@@ -8,13 +8,13 @@ class Compartment():
         self.type = dict['type']
         self.volume = dict['volume']
         self.initial_amount = dict['initial_amount']
-        self.rate_in = dict['rate_in']
+        self.rate_in = dict.get('rate_in', None)
         self.rate_out = dict['rate_out']
 
 class Model():
-    def __init__(self):
+    def __init__(self, systemfile):
 
-        parser = Parser("system.json")
+        parser = Parser(systemfile)
         basic_params, compartment_list = parser.construct()
 
         # basic parameters
@@ -29,7 +29,7 @@ class Model():
             self.subcutaneous = compartment_list[-1]
             self.other_compartments = compartment_list[1:-1]
         else:
-            self.central, *self.other_compartments = compartment_list            # TODO: check if this works
+            self.central, *self.other_compartments = self.compartment_list            # TODO: check if this works
 
     def dose(t):
         if self.dose_type == "continuous":
