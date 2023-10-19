@@ -15,7 +15,7 @@ class Model():
     def __init__(self, systemfile):
 
         parser = Parser(systemfile)
-        basic_params, compartment_list = parser.construct()
+        basic_params, compartments = parser.construct()
 
         # basic parameters
         self.subcutaneous = basic_params['subcutaneous']            # boolean
@@ -23,7 +23,7 @@ class Model():
         self.dose_type = basic_params['dose'][1]                    # dosage schedule
 
         # create compartment objects
-        self.compartment_list = [Compartment(dict) for dict in compartment_list]
+        self.compartment_list = [Compartment(dict) for dict in compartments]
         if self.subcutaneous:
             self.central = self.compartment_list[0]
             self.subcutaneous = self.compartment_list[-1]
@@ -31,7 +31,7 @@ class Model():
         else:
             self.central, *self.other_compartments = self.compartment_list            # TODO: check if this works
 
-    def dose(t):
+    def dose(self,t):
         if self.dose_type == "continuous":
             return self.dose_constant
         elif self.dose_type == "once":
@@ -39,7 +39,7 @@ class Model():
         else:
             raise ValueError("some error occured in dose(t)")
     
-    def ode_system(t, y):
+    def ode_system(self, t, y):
         if self.subcutaneous:
             central_amount, subcutaneous_amount = y[0], y[-1]
             other_amounts = y[1:-1]
@@ -48,16 +48,16 @@ class Model():
 
         # calculate derivatives for peripheral compartments
         derivatives = []
-        for amount, C in zip(y0, self.other_compartments):
+        for amount, C in zip(y, self.other_compartments):
             deriv = C.rate_in * (y[0] / self.central.volume - amount / C.volume)
             derivatives.append(deriv)
         # calculate derivative for subcutaneous and central compartments
         if self.subcutaneous:
             der_central = self.subcutaneous.rate_out * y[-1] - y[0] / self.central.volume * self.central.rate_out - sum(derivatives)
-            der_subcutaneous = dose(t) - self.subcutaneous.rate_out * y[-1]
+            der_subcutaneous = self.dose(t) - self.subcutaneous.rate_out * y[-1]
             return [der_central] + derivatives + [der_subcutaneous]
         else:
-            der_central = dose(t) - y[0] / self.central.volume * self.central.rate_out - sum(derivatives)
+            der_central = self.dose(t) - y[0] / self.central.volume * self.central.rate_out - sum(derivatives)
             return [der_central] + derivatives
 
     def solve(self):
@@ -66,7 +66,7 @@ class Model():
         return solutions (timeseries)
         """
         # time span to project over (change to user-input TODO)
-        t_span = 1000
+        t_span = [0,1000]
         
         # define initial conditions
         if self.subcutaneous:
