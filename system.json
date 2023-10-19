@@ -3,7 +3,7 @@
         "subcutaneous" : 1,
         "dose" : [20,"continuous"]
     },
-    
+
     "compartment_1" : {
         "name" : "bloodstream",
         "type" : "central",

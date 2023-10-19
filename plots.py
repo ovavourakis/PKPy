@@ -1,8 +1,6 @@
 # Functions to visualise the PK data
-
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
-#import matplotlib.colors as mcolors
 import numpy as np
 import pickle
 # Global font settings
@@ -39,7 +37,7 @@ def get_compartments(data):
 
 
 # Generate an overall plot for the compartments
-def combined_plot(data, title='PK Model', zoom_start=0, zoom_end=100):
+def combined_plot(data, title='PK Model', zoom_start=0, zoom_end=100, output='pk_model.png'):
     """
     Generate a plot of the PK model.
 
@@ -72,6 +70,7 @@ def combined_plot(data, title='PK Model', zoom_start=0, zoom_end=100):
 
     # Plot the full data on the main axis
     for i, j in enumerate(compartments):
+        # Exceptions for more than 5 compartments (colors)
         try:
             ax.plot(d[j], label=j, c=colors[i])
         except:
@@ -95,21 +94,23 @@ def combined_plot(data, title='PK Model', zoom_start=0, zoom_end=100):
 
     # Plot the zoomed in data on the left axis
     for i, j in enumerate(compartments):
+        # Exceptions for more than 5 compartments (colors)
         try:
-            ax_zm.plot(d[j][zoom_start:zoom_end], c=colors[i])
+            ax_zm.plot(d[j][zoom_start:zoom_end], label=j, c=colors[i])
         except:
-            ax_zm.plot(d[j][zoom_start:zoom_end])
+            ax_zm.plot(d[j][zoom_start:zoom_end], label=j)
 
     ## LABELS
-    # Show y-labels on ax_zm
+    # Show y-labels on ax_zm (zoomed axis)
     ax_zm.set_ylabel('Concentration (mg/L)', fontsize="medium")
     ax_zm.set_xlabel('Timestep', fontsize="medium")
     ax.set_xlabel('Timestep', fontsize="medium")
     # Show legend
-    ax.legend(loc='upper left', fontsize="x-small", frameon=False)
+    ax.legend(loc='upper left', fontsize="x-small", frameon=False) # full plot
+    #ax_zm.legend(loc='upper left', fontsize="x-small", frameon=False)  # zoomed plot
 
     # Save the figure
-    plt.savefig('bloodstream.png', dpi=300, bbox_inches='tight')
+    plt.savefig(output, dpi=300, bbox_inches='tight')
 
 # Testing
 combined_plot(d)
