@@ -1,6 +1,6 @@
 {
     "basic_parameters" : {
-        "subcutaneous" : 1,
+        "subcutaneous" : 0,
         "dose" : [20,"continuous"]
     },
     
@@ -9,15 +9,7 @@
         "type" : "central",
         "volume" : 5000,
         "initial_amount" : 0.0,
-        "rate_out": 1.0
-    },
-
-    "compartment_2" : {
-        "name" : "subcutaneous",
-        "type" : "subcutaneous",
-        "volume" : 5000,
-        "initial_amount" : 0.0,
-        "rate_out": 1.0
+        "rate_out": 0.5
     },
 
     "compartment_3" : {
