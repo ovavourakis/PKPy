@@ -45,20 +45,20 @@ class Model():
             central_amount, subcutaneous_amount = y[0], y[-1]
             other_amounts = y[1:-1]
         else:
-            central_amount, *other_amounts = y
+            self.central_amount, *self.other_amounts = y
 
         # calculate derivatives for peripheral compartments
         derivatives = []
-        for amount, C in zip(y, self.other_compartments):
-            deriv = C.rate_in * (y[0] / self.central.volume - amount / C.volume)
+        for amount, C in zip(other_amounts, self.other_compartments):
+            deriv = C.rate_in * (central_amount / self.central.volume - amount / C.volume)
             derivatives.append(deriv)
         # calculate derivative for subcutaneous and central compartments
         if self.subcutaneous:
-            der_central = self.subcutaneous.rate_out * y[-1] - y[0] / self.central.volume * self.central.rate_out - sum(derivatives)
-            der_subcutaneous = self.dose(t) - self.subcutaneous.rate_out * y[-1]
+            der_central = self.subcutaneous.rate_out * subcutaneous_amount -central_amount / self.central.volume * self.central.rate_out - sum(derivatives)
+            der_subcutaneous = self.dose(t) - self.subcutaneous.rate_out * subcutaneous_amount
             return [der_central] + derivatives + [der_subcutaneous]
         else:
-            der_central = self.dose(t) - y[0] / self.central.volume * self.central.rate_out - sum(derivatives)
+            der_central = self.dose(t) - central_amount/ self.central.volume * self.central.rate_out - sum(derivatives)
             return [der_central] + derivatives
 
     def solve(self):
