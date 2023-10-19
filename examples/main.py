@@ -1,7 +1,7 @@
-from model import *
+import PKPy as pk
 
 if __name__ == "__main__":
 
-    model = Model('system.json')
+    model = pk.Model('system.json')
     timeseries = model.solve()
     print(timeseries)

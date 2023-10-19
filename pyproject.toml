@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "PKPy"
+version = "0.1"
+description = "A package to solve simple pharmacokinetic models."
+authors = [
+    {name = "James Broster", email = "james.broster@dtc.ox.ac.uk"},
+    {name = "Ronald Cvek", email = "ronald.cvek@dtc.ox.ac.uk"},
+    {name = "Hamlet Khachatryan", email = "hamlet.khachatryan@dtc.ox.ac.uk"},
+    {name = "Odysseas Vavourakis", email = "odysseas.vavourakis@dtc.ox.ac.uk"}
+]
+readme = "README.md"
