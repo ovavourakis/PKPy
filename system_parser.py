@@ -30,4 +30,3 @@ class Parser:
                 raise ValueError(f"The {compartment['name']} compartment can be central, subcutaneous, or peripheral")
 
         return [basic_pars, compartments_sorted]
-
