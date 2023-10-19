@@ -5,5 +5,5 @@ setup(name='PKPy',
       description='A package to solve simple pharmacokinetic models.',
       author=[ "James Broster", "Ronald Cvek", "Hamlet Khachatryan", "Odysseas Vavourakis"],
       packages=['PKPy'],
-      install_requires = ["numpy", "matplotlib", "scipy"],
+      install_requires = ["numpy", "matplotlib", "scipy", "pytest"],
       license='MIT')
