@@ -1,10 +1,10 @@
 import pytest
 import sys
-from model import Model, Compartment
+from PKPy.model import Model, Compartment
 
 @pytest.fixture
 def model():
-    return Model("test/test_model.json")
+    return Model("PKPy/test/test_model.json")
 
 def test_compartment_constructor():
     data = {

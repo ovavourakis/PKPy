@@ -3,10 +3,10 @@ import pytest
 
 @pytest.mark.parametrize(
     "test, expected, expect_raises",
-    [(f"test/parser_tests_jsons/test_{test_number}.json", None, ValueError) for test_number in range(1, 9)])
+    [(f"PKPy/test/parser_tests_jsons/test_{test_number}.json", None, ValueError) for test_number in range(1, 9)])
 def test_parser_for_errors(test, expected, expect_raises):
     """Test mean function works for array of zeroes and positive integers."""
-    from system_parser import Parser
+    from PKPy.system_parser import Parser
     with pytest.raises(expect_raises):
         assert Parser(test).construct() == expected
 
@@ -27,8 +27,8 @@ expected_values = [[{'subcutaneous': 0, 'dose': [20, 'continuous']}, [
 
 @pytest.mark.parametrize(
     "test, expected",
-    [(f"test/parser_tests_jsons/test_9.json", expected_values[0]),
-     (f"test/parser_tests_jsons/test_10.json", expected_values[1])])
+    [(f"PKPy/test/parser_tests_jsons/test_9.json", expected_values[0]),
+     (f"PKPy/test/parser_tests_jsons/test_10.json", expected_values[1])])
 def test_parser_for_wrong_output(test, expected):
-    from system_parser import Parser
+    from PKPy.system_parser import Parser
     assert Parser(test).construct() == expected
