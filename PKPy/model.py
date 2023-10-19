@@ -1,6 +1,8 @@
-import scipy
+import scipy, os, pickle
+import matplotlib.pyplot as plt 
 import numpy as np
 
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 from .system_parser import Parser
 
 class Compartment():
@@ -39,7 +41,8 @@ class Model():
         basic_params, compartments = parser.construct()
 
         # basic parameters
-        self.is_subcutaneous = basic_params['subcutaneous']            # boolean
+        self.systemfile = systemfile.split('/')[-1].split('.')[0]
+        self.is_subcutaneous = basic_params['subcutaneous']         # boolean
         self.dose_constant = basic_params['dose'][0]                # amount
         self.dose_type = basic_params['dose'][1]                    # dosage schedule
 
@@ -126,10 +129,80 @@ class Model():
         compartment_timeseries = {}
         for i, C in enumerate(self.compartment_list):
             compartment_timeseries[C.name] = sol.y[i]
+
+        os.makedirs('results/', exist_ok=True)
+        with open(f'results/timeseries_{self.systemfile}.pickle', 'wb') as f:
+            pickle.dump(compartment_timeseries, f)
+
+        self.timeseries = compartment_timeseries
+
         return compartment_timeseries
         
-    def plot(self):
-        """
-        Plots the solutions returned by self.solve().
-        """
-        pass
+    def plot(self, title='PK Model', zoom_start=0, zoom_end=100, output='pk_model.png'):       
+        if hasattr(self, 'timeseries'):
+            data = self.timeseries
+        elif os.path.exists(f'results/timeseries_{self.systemfile}.pickle'):
+            with open(f'results/timeseries_{self.systemfile}.pickle', 'rb') as handle:
+                data = pickle.load(handle)
+                if type(data) != dict:
+                    raise ValueError(f"Pickle file 'results/timeseries_{self.systemfile}.pickle' is not a dictionary.")
+        else:   
+            raise ValueError("No timeseries data found. Please run solve() first.")
+        
+        plt.rcParams["font.family"] = "serif"
+        plt.rcParams["mathtext.fontset"] = "dejavuserif"
+
+        ## DATA
+        # Get the compartments from the data
+        compartments = list(data.keys())
+
+        ## COLORS
+        colors = ["#091326","#84AEBF","#F29966","#BF5D39","#59211C"]    
+
+        ## FIGURE
+        # Create figure
+        fig, ax = plt.subplots(dpi=300, figsize=(9, 3.5))
+
+        # Plot the full data on the main axis
+        for i, j in enumerate(compartments):
+            # Exceptions for more than 5 compartments (colors)
+            try:
+                ax.plot(data[j], label=j, c=colors[i])
+            except:
+                ax.plot(data[j], label=j)
+
+        # Title 
+        fig.suptitle(title, fontsize="large", y=1.05)
+
+        ## MAIN AXIS TICKS
+        # Turn off y tick labels and yaxis on axm (main axis/plot)
+        axm = ax.axes.get_yaxis()
+        axm.set_visible(False)
+        axm.set_minor_locator(plt.NullLocator())
+
+        ## LEFT ZOOMED AXIS
+        # Create new axes on the left of the current axes
+        divider = make_axes_locatable(ax)
+        ax_zm = divider.append_axes("left", 2, pad=0.2, sharey=ax)
+        ax_zm.set_title('Zoomed in', fontsize="medium")
+        ax.set_title('Full Plot', fontsize="medium")
+
+        # Plot the zoomed in data on the left axis
+        for i, j in enumerate(compartments):
+            # Exceptions for more than 5 compartments (colors)
+            try:
+                ax_zm.plot(data[j][zoom_start:zoom_end], label=j, c=colors[i])
+            except:
+                ax_zm.plot(data[j][zoom_start:zoom_end], label=j)
+
+        ## LABELS
+        # Show y-labels on ax_zm (zoomed axis)
+        ax_zm.set_ylabel('Concentration (mg/L)', fontsize="medium")
+        ax_zm.set_xlabel('Timestep', fontsize="medium")
+        ax.set_xlabel('Timestep', fontsize="medium")
+        # Show legend
+        ax.legend(loc='upper left', fontsize="x-small", frameon=False) # full plot
+        #ax_zm.legend(loc='upper left', fontsize="x-small", frameon=False)  # zoomed plot
+
+        # Save the figure
+        plt.savefig(output, dpi=300, bbox_inches='tight')
