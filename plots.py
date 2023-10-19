@@ -11,7 +11,7 @@ plt.rcParams["mathtext.fontset"] = "dejavuserif"
 
 # LOAD PICKLE DATA
 # Filename
-data_eg = 'example_timeseries.pkl'
+data_eg = 'example_timeseries.pkl' # TESTING
 # Load the data
 with open(data_eg, 'rb') as handle:
     d = pickle.load(handle)
@@ -63,13 +63,19 @@ def combined_plot(data, title='PK Model', zoom_start=0, zoom_end=100):
     # Get the compartments from the data
     compartments = get_compartments(data)
 
+    ## COLORS
+    colors = ["#091326","#84AEBF","#F29966","#BF5D39","#59211C"]    
+
     ## FIGURE
     # Create figure
     fig, ax = plt.subplots(dpi=300, figsize=(9, 3.5))
 
     # Plot the full data on the main axis
-    for i in compartments:
-        ax.plot(d[i], label=i)
+    for i, j in enumerate(compartments):
+        try:
+            ax.plot(d[j], label=j, c=colors[i])
+        except:
+            ax.plot(d[j], label=j)
 
     # Title 
     fig.suptitle(title, fontsize="large", y=1.05)
@@ -88,8 +94,11 @@ def combined_plot(data, title='PK Model', zoom_start=0, zoom_end=100):
     ax.set_title('Full Plot', fontsize="medium")
 
     # Plot the zoomed in data on the left axis
-    for i in compartments:
-        ax_zm.plot(d[i][zoom_start:zoom_end])
+    for i, j in enumerate(compartments):
+        try:
+            ax_zm.plot(d[j][zoom_start:zoom_end], c=colors[i])
+        except:
+            ax_zm.plot(d[j][zoom_start:zoom_end])
 
     ## LABELS
     # Show y-labels on ax_zm
