@@ -19,13 +19,13 @@ class Model():
         basic_params, compartments = parser.construct()
 
         # basic parameters
-        self.subcutaneous = basic_params['subcutaneous']            # boolean
+        self.is_subcutaneous = basic_params['subcutaneous']            # boolean
         self.dose_constant = basic_params['dose'][0]                # amount
         self.dose_type = basic_params['dose'][1]                    # dosage schedule
 
         # create compartment objects
         self.compartment_list = [Compartment(dict) for dict in compartments]
-        if self.subcutaneous:
+        if self.is_subcutaneous:
             self.central = self.compartment_list[0]
             self.subcutaneous = self.compartment_list[-1]
             self.other_compartments = self.compartment_list[1:-1]
@@ -41,11 +41,11 @@ class Model():
             raise ValueError("some error occured in dose(t)")
     
     def ode_system(self, t, y):
-        if self.subcutaneous:
+        if self.is_subcutaneous:
             central_amount, subcutaneous_amount = y[0], y[-1]
             other_amounts = y[1:-1]
         else:
-            self.central_amount, *self.other_amounts = y
+            central_amount, *other_amounts = y
 
         # calculate derivatives for peripheral compartments
         derivatives = []
@@ -53,7 +53,7 @@ class Model():
             deriv = C.rate_in * (central_amount / self.central.volume - amount / C.volume)
             derivatives.append(deriv)
         # calculate derivative for subcutaneous and central compartments
-        if self.subcutaneous:
+        if self.is_subcutaneous:
             der_central = self.subcutaneous.rate_out * subcutaneous_amount -central_amount / self.central.volume * self.central.rate_out - sum(derivatives)
             der_subcutaneous = self.dose(t) - self.subcutaneous.rate_out * subcutaneous_amount
             return [der_central] + derivatives + [der_subcutaneous]
@@ -71,7 +71,7 @@ class Model():
         t_eval = np.linspace(t_span[0],t_span[1],1000)
         
         # define initial conditions
-        if self.subcutaneous:
+        if self.is_subcutaneous:
             y0 = [self.central.initial_amount, self.subcutaneous.initial_amount]
             for c in self.other_compartments:
                 y0.append(c.initial_amount)
@@ -85,7 +85,6 @@ class Model():
         compartment_timeseries = {}
         for i, C in enumerate(self.compartment_list):
             compartment_timeseries[C.name] = sol.y[i]
-
         return compartment_timeseries
         
     def plot(self):
