@@ -1,4 +1,5 @@
-import scipy, numpy
+import scipy
+import numpy as np
 
 from system_parser import Parser
 
@@ -67,6 +68,7 @@ class Model():
         """
         # time span to project over (change to user-input TODO)
         t_span = [0,1000]
+        t_eval = np.linspace(t_span[0],t_span[1],1000)
         
         # define initial conditions
         if self.subcutaneous:
@@ -78,9 +80,13 @@ class Model():
             for c in self.other_compartments:
                 y0.append(c.initial_amount)
 
-        sol = scipy.integrate.solve_ivp(self.ode_system, t_span, y0)
+        sol = scipy.integrate.solve_ivp(self.ode_system, t_span, y0, t_eval=t_eval)
 
-        return sol
+        compartment_timeseries = {}
+        for i, C in enumerate(self.compartment_list):
+            compartment_timeseries[C.name] = sol.y[i]
+
+        return compartment_timeseries
         
     def plot(self):
         """
