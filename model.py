@@ -25,9 +25,9 @@ class Model():
         # create compartment objects
         self.compartment_list = [Compartment(dict) for dict in compartment_list]
         if self.subcutaneous:
-            self.central = compartment_list[0]
-            self.subcutaneous = compartment_list[-1]
-            self.other_compartments = compartment_list[1:-1]
+            self.central = self.compartment_list[0]
+            self.subcutaneous = self.compartment_list[-1]
+            self.other_compartments = self.compartment_list[1:-1]
         else:
             self.central, *self.other_compartments = self.compartment_list            # TODO: check if this works
 
@@ -78,7 +78,7 @@ class Model():
             for c in self.other_compartments:
                 y0.append(c.initial_amount)
 
-        sol = scipy.integrate.solve_ivp(ode_system, t_span, y0)
+        sol = scipy.integrate.solve_ivp(self.ode_system, t_span, y0)
 
         return sol
         
