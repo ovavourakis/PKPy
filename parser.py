@@ -1,6 +1,4 @@
 import json
-
-
 class Parser:
     """
     parses system.json
