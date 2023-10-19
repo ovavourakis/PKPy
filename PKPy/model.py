@@ -1,7 +1,7 @@
 import scipy
 import numpy as np
 
-from .system_parser import Parser
+from system_parser import Parser
 
 class Compartment():
     

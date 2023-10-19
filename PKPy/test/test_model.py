@@ -27,7 +27,7 @@ def test_dose(model):
     assert model.dose(0) == model.dose_constant
     assert model.dose(1) == model.dose_constant
 
-    model.dose_type = 'once'
+    model.dose_type = 'bolus'
     assert model.dose(0) == model.dose_constant
     assert model.dose(1) == 0
 
