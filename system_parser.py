@@ -1,12 +1,10 @@
 import json
+
+
 class Parser:
     """
-    parses system.json
-    returns a list of dictionaries [basic parameters, [compartment1, compartment2]] (each element is a dictionary)
-
-    item with index 0 in second list is the CENTRAL compartment, index -1 is subcutaneous (if present), then other compartments
-
-    within the basic parameters, the dose should be a list of two equal-length lists, one with time values, the other with dose values (doses first, then times)
+    This class pareses system.json file and returns a list of dictionaries:
+    [basic parameters, [compartment1, compartment2]] (each element is a dictionary)
     """
 
     def __init__(self, system_config):
@@ -21,12 +19,32 @@ class Parser:
         compartments = list(sys_config_cp.values())
         compartments_sorted = sorted(compartments, key=lambda d: d['type'])
 
+        # Item with index 0 in the "compartments_sorted" list is the CENTRAL compartment.
+        # Item with index -1  in the "compartments_sorted" list is SUBCUTANEOUS compartment (if present).
+
+        for i in compartments_sorted:
+            missing_attributes = list(
+                {"name", "type", "volume", "initial_amount", "rate_in", "rate_out"} - set(i.keys()))
+            if len(missing_attributes) != 0:
+                for attribute in missing_attributes:
+                    i.update({attribute: None})
+
         if ((basic_pars['subcutaneous'] == 1 and compartments_sorted[-1]['type'] != 'subcutaneous') or
                 (basic_pars['subcutaneous'] != 1 and compartments_sorted[-1]['type'] == 'subcutaneous')):
-            raise ValueError("If the subcutaneous flag is True, the corresponding compartment must be defined and vice versa.")
-
+            raise ValueError("If the subcutaneous flag is set to True, the corresponding compartment must \
+            also be defined and vice versa.")
+        if type(basic_pars['dose'][0]) not in [int, float] or basic_pars['dose'][0] <= 0:
+            raise ValueError("Drug dosage must be positive number.")
+        if basic_pars['dose'][1] not in ["bolus", "continuous"]:
+            raise ValueError("Drug administration type must be 'bolus' or 'continuous'")
+        if [i['type'] for i in compartments_sorted].count('central') != 1:
+            raise ValueError("One and only one of the compartments must have a 'central' type")
+        if [i['type'] for i in compartments_sorted].count('subcutaneous') > 1:
+            raise ValueError("Only one compartment could have a 'subcutaneous' type.")
         for compartment in compartments_sorted:
             if compartment['type'] not in ['central', 'subcutaneous', 'peripheral']:
                 raise ValueError(f"The {compartment['name']} compartment can be central, subcutaneous, or peripheral")
+            if compartment['volume'] is None or compartment['volume'] <= 0:
+                raise ValueError(f"The volume of compartment {compartment['name']} must be positive number.")
 
         return [basic_pars, compartments_sorted]

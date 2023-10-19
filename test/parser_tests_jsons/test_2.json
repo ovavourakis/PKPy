@@ -1,9 +1,9 @@
 {
     "basic_parameters" : {
         "subcutaneous" : 0,
-        "dose" : [2,"continuous"]
+        "dose" : [-1,"continuous"]
     },
-    
+
     "compartment_1" : {
         "name" : "bloodstream",
         "type" : "central",
@@ -19,14 +19,5 @@
         "initial_amount" : 0.0,
         "rate_in" : 1.0,
         "rate_out": 1.0
-    },
-
-    "compartment_3" : {
-        "name" : "adipose",
-        "type" : "peripheral",
-        "volume" : 3000,
-        "initial_amount" : 0.0,
-        "rate_in" : 1.0,
-        "rate_out": 3
     }
 }
