@@ -35,7 +35,7 @@ class Model():
     def dose(self,t):
         if self.dose_type == "continuous":
             return self.dose_constant
-        elif self.dose_type == "once":
+        elif self.dose_type == "bolus":
             return self.dose_constant if t==0 else 0
         else:
             raise ValueError("some error occured in dose(t)")
