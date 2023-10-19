@@ -29,8 +29,8 @@
         "rate_out": 1.0
     },
 
-    "compartment_3" : {
-        "name" : "adipose",
+    "compartment_4" : {
+        "name" : "liver",
         "type" : "peripheral",
         "volume" : 3000,
         "initial_amount" : 0.0,
