@@ -1,0 +1,33 @@
+{
+    "basic_parameters" : {
+        "time_span": 10000,
+        "subcutaneous" : 0,
+        "dose" : [10, "continuous"]
+    },
+    
+    "compartment_1" : {
+        "name" : "Bloodstream",
+        "type" : "central",
+        "volume" : 5000,
+        "initial_amount" : 0.0,
+        "rate_out": 10
+    },
+
+    "compartment_3" : {
+        "name" : "Liver",
+        "type" : "peripheral",
+        "volume" : 2000,
+        "initial_amount" : 0.0,
+        "rate_in" : 1,
+        "rate_out": 0.5
+    },
+
+    "compartment_4" : {
+        "name" : "Adipose tissue",
+        "type" : "peripheral",
+        "volume" : 3000,
+        "initial_amount" : 0.0,
+        "rate_in" : 2,
+        "rate_out": 1
+    }
+}
