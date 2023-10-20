@@ -7,6 +7,9 @@ Welcome to PKPy's documentation!
 ================================
 
 .. toctree::
+   :maxdepth: 2
+   :caption: Contents:
+
 .. automodule:: PKPy.model
    :members:
    :undoc-members:
