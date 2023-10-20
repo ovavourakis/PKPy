@@ -160,7 +160,9 @@ class Model():
         compartments = list(data.keys())
 
         ## COlOURS
-        colours = [self.random_color_generator() for i in range(len(compartments))]
+        colors_p = ["#091326"]#,"#84AEBF","#F29966","#BF5D39","#59211C"]
+        colors_gen = [self.random_color_generator() for i in range(len(compartments))]
+        colors = colors_p + colors_gen
 
 
         ## FIGURE
@@ -169,12 +171,18 @@ class Model():
 
         # Plot the full data on the main axis
         for i, j in enumerate(compartments):
-                ax.plot(data[j], label=j, c=colours[i])
+            try:
+                ax.plot(data[j], label=j, c=colors[i])
+            except:
+                ax.plot(data[j], label=j, c=self.random_color_generator())
 
         # Title 
         fig.suptitle(title, fontsize="large", y=1.05)
 
         ## MAIN AXIS TICKS
+        # Set y-axis ticks on the right side of the plot
+        ax.yaxis.tick_right()
+        
         # Turn off y tick labels and yaxis on axm (main axis/plot)
         # axm = ax.axes.get_yaxis()
         # axm.set_visible(False)
@@ -183,14 +191,17 @@ class Model():
         ## LEFT ZOOMED AXIS
         # Create new axes on the left of the current axes
         divider = make_axes_locatable(ax)
-        ax_zm = divider.append_axes("left", 2, pad=0.8)
+        ax_zm = divider.append_axes("left", 2, pad=0.2)
         ax_zm.set_title('Zoomed in', fontsize="medium")
-        ax_zm.set_ylim(0, 50*self.dose_constant)
+        ax_zm.set_ylim(-25, 50*self.dose_constant)
         ax.set_title('Full Plot', fontsize="medium")
 
         # Plot the zoomed in data on the left axis
         for i, j in enumerate(compartments):
-                ax_zm.plot(data[j][zoom_start:zoom_end], label=j, c=colours[i])
+            try:
+                ax_zm.plot(data[j][zoom_start:zoom_end], label=j, c=colors[i])
+            except:
+                ax_zm.plot(data[j][zoom_start:zoom_end], label=j, c=self.random_color_generator())
 
         ## LABELS
         # Show y-labels on ax_zm (zoomed axis)
@@ -199,7 +210,7 @@ class Model():
         ax.set_xlabel('Timestep', fontsize="medium")
 
         # Show legend
-        ax.legend(loc='upper left', fontsize="x-small", frameon=False) # full plot
+        ax.legend(loc='upper left', fontsize="x-small", frameon=False) # full plot # 
 
 
         # Save the figure
