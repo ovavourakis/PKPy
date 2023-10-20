@@ -1,4 +1,6 @@
-PKPy is a small Python package to solve simple, compartment-based pharmacokinetic models. It currently supports bolus (one-time) or continuous drug administration and an arbitrary number of peripheral compartments. Drugs can be administered directly into a central compartment, or alternatively flow first into a special subcutaneous compartment and thence into the central one.
+PKPy is a small Python package to solve simple, compartment-based pharmacokinetic models. It was developed as a three-day exercise in collaborative software engineering as part of the SABS Doctoral Training Programme at Oxford University.
+
+PKPy currently supports bolus (one-time) or continuous drug administration and an arbitrary number of peripheral compartments. Drugs can be administered directly into a central compartment, or alternatively flow first into a special subcutaneous compartment and thence into the central one.
 
 See the full documentation in the `docs/build/html/` directory (open `index.html` in a browser of your choice).
 
