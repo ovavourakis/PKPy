@@ -4,7 +4,7 @@ import numpy as np
 
 class Parser:
     """
-    This class parses and stores the system configuration from a user-provided config file (compartment definitions).
+    This class parses and stores the system configuration from a user-provided config file in JSON (compartment definitions).
 
     :param system_config: The path to the system configuration file (compartment definitions).
     :type system_config: str
@@ -18,7 +18,7 @@ class Parser:
 
     def __init__(self, system_config):
         """
-        Initializes a SystemParser object with the given system configuration file.
+        Initializes a Parser object with the given system configuration file (model compartment definitions).
 
         :param system_config: The path to the system configuration file.
         :type system_config: str
@@ -30,9 +30,9 @@ class Parser:
 
     def construct(self):
         """
-        For an initialised Parser object, this method constructs and returns the system configuration.
+        For an initialised Parser object, constructs and returns the system configuration.
 
-        :return: A list, containing, in this order, the basic parameters (as a dictionary) and individual compartment parameters (a list of dictionaries).
+        :return: A list, containing the model's basic parameters (as a dictionary) and individual compartment parameters (as a list of dictionaries).
         :rtype: list
 
         :raises ValueError: If the subcutaneous flag is set to True, the corresponding compartment must also be defined and vice versa.

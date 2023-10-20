@@ -43,12 +43,14 @@ class Model():
 
     :ivar str systemfile: The name of the system file (compartment definitions).
     :ivar bool is_subcutaneous: Whether the model has a subcutaneous compartment or not.
-    :ivar float dose_constant: The dose constant.
-    :ivar str dose_type: The type dosage schedule ('bolus' or 'continuous').
+    
+    :ivar str dose_type: The type dosage schedule ('bolus' or 'continuous') or user-provided dosage function.
+    :ivar float dose_constant: The dose constant (defaults to 10 if user provides a dosage function).
+    
     :ivar list compartment_list: A list of compartments in the model (as Compartment objects).
     :ivar Compartment central: The central compartment.
     :ivar Compartment subcutaneous: The subcutaneous compartment (if present).
-    :ivar list other_compartments: A list of other (peripheral) compartments in the model.
+    :ivar list other_compartments: A list of other (peripheral) compartments (as Compartment objects) in the model.
 
     :Usage Example:
 
@@ -77,7 +79,7 @@ class Model():
             self.dose_constant = basic_params['dose'][0]            # amount
             self.dose_type = basic_params['dose'][1]                # dosage schedule
         else:
-            self.dose_type = basic_params['dose']                   # dosage function
+            self.dose_type = basic_params['dose']                   # user-provided dosage function
             self.dose_constant = 10
 
         # create compartment objects
@@ -91,14 +93,13 @@ class Model():
 
     def dose(self,t):
         """
-        Returns the dose at time t using dosage function specified by the user. 
+        Returns the dose at time t using dosage function specified by the user in the system config file. 
         The options are:
 
         :param t: The time at which to calculate the dose.
         :type t: float
         :return: The dose at time t.
         :rtype: float
-        :raises ValueError: If an invalid dose type is specified.
         """
         if self.dose_type == "continuous":
             return self.dose_constant
@@ -110,13 +111,13 @@ class Model():
     
     def ode_system(self, t, y):
         """
-        Returns the system of ordinary differential equations (ODEs) that describe the model.
+        The system of ordinary differential equations (ODEs) that describe the model.
 
         :param t: The current time.
         :type t: float
-        :param y: A list of the current amounts of substance in each compartment.
+        :param y: A list of the current amounts of substance in each compartment. The order of the compartments is as follows: central, peripheral (any number), subcutaneous (if present).
         :type y: list
-        :return: A list of the derivatives of the amounts of substance in each compartment.
+        :return: A list of the derivatives of the amounts of substance in each compartment in the same order as the input y.
         :rtype: list
         """
         if self.is_subcutaneous:
@@ -142,7 +143,8 @@ class Model():
 
     def solve(self):
         """
-        Solves the system of ODEs using scipy.integrate.solve_ivp and returns the solutions.
+        Solves the system of ODEs using scipy.integrate.solve_ivp, returns the solutions,
+        and also writes them out to a pickle file in the results/ directory.
 
         :return: A dictionary containing the timeseries for each compartment.
         :rtype: dict
@@ -179,7 +181,7 @@ class Model():
         
     def plot(self, title='PK Model', zoom_start=0, zoom_end=100, output='pk_model.png'):       
         """
-        Plots the time-series data for the PK model.
+        Plots the ODE solutions over time. Requires Model.solve() to be run first.
 
         :param title: Title of the plot. Default is 'PK Model'.
         :type title: str
@@ -190,6 +192,12 @@ class Model():
         :param output: Output file name for the plot. Default is 'pk_model.png'.
         :type output: str
         :raises ValueError: If no timeseries data is found, or if the pickle file is not a dictionary.
+
+        :Usage Example:
+
+        >>> model = Model('system.json')
+        >>> model.solve()
+        >>> model.plot()   # outputs a plot of the model to results/
         """
         
         if hasattr(self, 'timeseries'):
