@@ -1,0 +1,208 @@
+import scipy, os, pickle
+import matplotlib.pyplot as plt 
+import numpy as np
+
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+from .system_parser import Parser
+
+class Compartment():
+    
+    def __init__(self, dict): # name, type, volume, initial_amount, rate_in, rate_out):
+        """
+        Initializes a Compartment object with the given dictionary of parameters.
+
+        Args:
+        - dict (dict): A dictionary containing the following keys:
+            - name (str): The name of the compartment.
+            - type (str): The type of the compartment.
+            - volume (float): The volume of the compartment.
+            - initial_amount (float): The initial amount of substance in the compartment.
+            - rate_in (float): The rate of substance flowing into the compartment.
+            - rate_out (float): The rate of substance flowing out of the compartment.
+        """
+        self.name = dict['name']
+        self.type = dict['type']
+        self.volume = dict['volume']
+        self.initial_amount = dict['initial_amount']
+        self.rate_in = dict.get('rate_in', None)
+        self.rate_out = dict['rate_out']
+
+class Model():
+    def __init__(self, systemfile):
+        """
+        Initializes a Model object with the given system file (the specification of
+        the ODE system in the form of compartments of particular types ("central", 
+        "subcutaneous" or "peripheral") with associated rates, volumes and initial amounts).
+
+        Args:
+        - systemfile (str): The path to the system file.
+        """
+        parser = Parser(systemfile)
+        basic_params, compartments = parser.construct()
+
+        # basic parameters
+        self.systemfile = systemfile.split('/')[-1].split('.')[0]
+        self.is_subcutaneous = basic_params['subcutaneous']         # boolean
+        self.dose_constant = basic_params['dose'][0]                # amount
+        self.dose_type = basic_params['dose'][1]                    # dosage schedule
+
+        # create compartment objects
+        self.compartment_list = [Compartment(dict) for dict in compartments]
+        if self.is_subcutaneous:
+            self.central = self.compartment_list[0]
+            self.subcutaneous = self.compartment_list[-1]
+            self.other_compartments = self.compartment_list[1:-1]
+        else:
+            self.central, *self.other_compartments = self.compartment_list
+
+    def dose(self,t):
+        """
+        Returns the dose at time t.
+
+        Args:
+        - t (float): The time at which to calculate the dose.
+
+        Returns:
+        - The dose at time t.
+        """
+        if self.dose_type == "continuous":
+            return self.dose_constant
+        elif self.dose_type == "bolus":
+            return self.dose_constant if t==0 else 0
+        else:
+            raise ValueError("some error occured in dose(t)")
+    
+    def ode_system(self, t, y):
+        """
+        Returns the system of ordinary differential equations (ODEs) that describe the model.
+
+        Args:
+        - t (float): The current time.
+        - y (list): A list of the current amounts of substance in each compartment.
+
+        Returns:
+        - A list of the derivatives of the amounts of substance in each compartment.
+        """
+        if self.is_subcutaneous:
+            central_amount, subcutaneous_amount = y[0], y[-1]
+            other_amounts = y[1:-1]
+        else:
+            central_amount, *other_amounts = y
+
+        # calculate derivatives for peripheral compartments
+        derivatives = []
+        for amount, C in zip(other_amounts, self.other_compartments):
+            deriv = C.rate_in * (central_amount / self.central.volume - amount / C.volume)
+            derivatives.append(deriv)
+        # calculate derivative for subcutaneous and central compartments
+        if self.is_subcutaneous:
+            der_central = self.subcutaneous.rate_out * subcutaneous_amount -central_amount / self.central.volume * self.central.rate_out - sum(derivatives)
+            der_subcutaneous = self.dose(t) - self.subcutaneous.rate_out * subcutaneous_amount
+            return [der_central] + derivatives + [der_subcutaneous]
+        else:
+            der_central = self.dose(t) - central_amount/ self.central.volume * self.central.rate_out - sum(derivatives)
+            return [der_central] + derivatives
+
+    def solve(self):
+        """
+        Solves the system of ODEs using scipy.integrate.solve_ivp and returns the solutions.
+
+        Returns:
+        - A dictionary containing the timeseries for each compartment.
+        """
+        # time span to project over (change to user-input TODO)
+        t_span = [0,1000]
+        t_eval = np.linspace(t_span[0],t_span[1],1000)
+        
+        # define initial conditions
+        if self.is_subcutaneous:
+            y0 = [self.central.initial_amount, self.subcutaneous.initial_amount]
+            for c in self.other_compartments:
+                y0.append(c.initial_amount)
+        else:
+            y0 = [self.central.initial_amount]
+            for c in self.other_compartments:
+                y0.append(c.initial_amount)
+
+        sol = scipy.integrate.solve_ivp(self.ode_system, t_span, y0, t_eval=t_eval)
+
+        compartment_timeseries = {}
+        for i, C in enumerate(self.compartment_list):
+            compartment_timeseries[C.name] = sol.y[i]
+
+        os.makedirs('results/', exist_ok=True)
+        with open(f'results/timeseries_{self.systemfile}.pickle', 'wb') as f:
+            pickle.dump(compartment_timeseries, f)
+
+        self.timeseries = compartment_timeseries
+
+        return compartment_timeseries
+        
+    def plot(self, title='PK Model', zoom_start=0, zoom_end=100, output='pk_model.png'):       
+        if hasattr(self, 'timeseries'):
+            data = self.timeseries
+        elif os.path.exists(f'results/timeseries_{self.systemfile}.pickle'):
+            with open(f'results/timeseries_{self.systemfile}.pickle', 'rb') as handle:
+                data = pickle.load(handle)
+                if type(data) != dict:
+                    raise ValueError(f"Pickle file 'results/timeseries_{self.systemfile}.pickle' is not a dictionary.")
+        else:   
+            raise ValueError("No timeseries data found. Please run solve() first.")
+        
+        plt.rcParams["font.family"] = "serif"
+        plt.rcParams["mathtext.fontset"] = "dejavuserif"
+
+        ## DATA
+        # Get the compartments from the data
+        compartments = list(data.keys())
+
+        ## COLORS
+        colors = ["#091326","#84AEBF","#F29966","#BF5D39","#59211C"]    
+
+        ## FIGURE
+        # Create figure
+        fig, ax = plt.subplots(dpi=300, figsize=(9, 3.5))
+
+        # Plot the full data on the main axis
+        for i, j in enumerate(compartments):
+            # Exceptions for more than 5 compartments (colors)
+            try:
+                ax.plot(data[j], label=j, c=colors[i])
+            except:
+                ax.plot(data[j], label=j)
+
+        # Title 
+        fig.suptitle(title, fontsize="large", y=1.05)
+
+        ## MAIN AXIS TICKS
+        # Turn off y tick labels and yaxis on axm (main axis/plot)
+        axm = ax.axes.get_yaxis()
+        axm.set_visible(False)
+        axm.set_minor_locator(plt.NullLocator())
+
+        ## LEFT ZOOMED AXIS
+        # Create new axes on the left of the current axes
+        divider = make_axes_locatable(ax)
+        ax_zm = divider.append_axes("left", 2, pad=0.2, sharey=ax)
+        ax_zm.set_title('Zoomed in', fontsize="medium")
+        ax.set_title('Full Plot', fontsize="medium")
+
+        # Plot the zoomed in data on the left axis
+        for i, j in enumerate(compartments):
+            # Exceptions for more than 5 compartments (colors)
+            try:
+                ax_zm.plot(data[j][zoom_start:zoom_end], label=j, c=colors[i])
+            except:
+                ax_zm.plot(data[j][zoom_start:zoom_end], label=j)
+
+        ## LABELS
+        # Show y-labels on ax_zm (zoomed axis)
+        ax_zm.set_ylabel('Concentration (mg/L)', fontsize="medium")
+        ax_zm.set_xlabel('Timestep', fontsize="medium")
+        ax.set_xlabel('Timestep', fontsize="medium")
+        # Show legend
+        ax.legend(loc='upper left', fontsize="x-small", frameon=False) # full plot
+        #ax_zm.legend(loc='upper left', fontsize="x-small", frameon=False)  # zoomed plot
+
+        # Save the figure
+        plt.savefig(output, dpi=300, bbox_inches='tight')

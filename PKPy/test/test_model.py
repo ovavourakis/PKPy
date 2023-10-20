@@ -1,10 +1,10 @@
 import pytest
 import sys
-from model import Model, Compartment
+from PKPy.model import Model, Compartment
 
 @pytest.fixture
 def model():
-    return Model("test/test_model.json")
+    return Model("PKPy/test/test_model.json")
 
 def test_compartment_constructor():
     data = {
@@ -27,7 +27,7 @@ def test_dose(model):
     assert model.dose(0) == model.dose_constant
     assert model.dose(1) == model.dose_constant
 
-    model.dose_type = 'once'
+    model.dose_type = 'bolus'
     assert model.dose(0) == model.dose_constant
     assert model.dose(1) == 0
 
