@@ -73,8 +73,12 @@ class Model():
         self.initiation_time = datetime.datetime.now().strftime("%Y_%m_%d-%H_%M_%S") # time of model initiation
         self.is_subcutaneous = basic_params['subcutaneous']         # boolean
         self.time_span = basic_params['time_span']                  # int
-        self.dose_constant = basic_params['dose'][0]                # amount
-        self.dose_type = basic_params['dose'][1]                    # dosage schedule
+        if not isinstance(basic_params['dose'], str):
+            self.dose_constant = basic_params['dose'][0]            # amount
+            self.dose_type = basic_params['dose'][1]                # dosage schedule
+        else:
+            self.dose_type = basic_params['dose']                   # dosage function
+            self.dose_constant = 10
 
         # create compartment objects
         self.compartment_list = [Compartment(dict) for dict in compartments]

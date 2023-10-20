@@ -64,18 +64,19 @@ class Parser:
                 (basic_pars['subcutaneous'] != 1 and compartments_sorted[-1]['type'] == 'subcutaneous')):
             raise ValueError("If the subcutaneous flag is set to True, the corresponding compartment must also be "
                              "defined and vice versa.")
-        if type(basic_pars['dose'][0]) not in [int, float] or basic_pars['dose'][0] <= 0:
-            raise ValueError("Drug dosage must be positive number.")
         if not isinstance(basic_pars['time_span'], int) or basic_pars['time_span'] <= 0:
             raise ValueError("Time span must be positive integer.")
-        # print(eval(basic_pars['dose'][1]))
         try:
-            dosage_func = lambda x: eval(basic_pars['dose'][1])
+            dosage_func = lambda x: eval(basic_pars['dose'])
             dosage_func(10)
         except:
-            if basic_pars['dose'][1] not in ["bolus", "continuous"]:
+            if not isinstance(basic_pars['dose'], list) or basic_pars['dose'][1] not in ["bolus", "continuous"]:
                 raise ValueError("Drug administration type must be 'bolus' or 'continuous' or a function expression "
-                                 "like 'np.cos(x +3)'")
+                                 "containing 'x', like 'np.cos(x +3)'")
+        if not isinstance(basic_pars['dose'],str):
+            if type(basic_pars['dose'][0]) not in [int, float] or basic_pars['dose'][0] <= 0:
+                raise ValueError("Drug dosage must be positive number.")
+
         if [i['type'] for i in compartments_sorted].count('central') != 1:
             raise ValueError("One and only one of the compartments must have a 'central' type")
         if [i['type'] for i in compartments_sorted].count('subcutaneous') > 1:
