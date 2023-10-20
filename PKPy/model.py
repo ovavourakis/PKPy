@@ -58,20 +58,26 @@ class Model():
 
     def dose(self,t):
         """
-        Returns the dose at time t.
-
+        Returns the dose at time t using specified dosage function by user:
+            bolus: Rapid one time injection
+            continuous: Continuous injection
+            specified function: The dose function will turn your expression containing 'x'
+                into a lambda function and a dose based on it. If you use numpy functions, please refer to it as 'np.'
         Args:
         - t (float): The time at which to calculate the dose.
 
         Returns:
-        - The dose at time t.
+        - The dose at time t.Ad
+
         """
         if self.dose_type == "continuous":
             return self.dose_constant
         elif self.dose_type == "bolus":
             return self.dose_constant if t == 0 else 0
         else:
-            raise ValueError("some error occurred in dose(t)")
+            dosage_function = lambda x: eval(self.dose_type)
+            return dosage_function(t)
+            # raise ValueError("some error occurred in dose(t)")
     
     def ode_system(self, t, y):
         """
@@ -111,7 +117,6 @@ class Model():
         Returns:
         - A dictionary containing the timeseries for each compartment.
         """
-        # time span to project over (change to user-input TODO)
         t_span = [0, self.time_span]
         t_eval = np.arange(0, self.time_span, 1)
 
