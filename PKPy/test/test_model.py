@@ -8,6 +8,9 @@ current_dir = os.path.dirname(__file__)
 file = os.path.join(current_dir, "test_model_subc.json")
 
 def test_compartment_constructor():
+    """
+    Test function that tests the constructor of the Compartment class.
+    """
     data = {
         'name': 'Unusual',
         'type': 'subcutaneous',
