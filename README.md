@@ -5,7 +5,11 @@ See the full documentation in the `docs/` directory.
 ### Installation
 After cloning PKPy, you can use `pip` to install it:
 
-`pip install /path/to/PKPy`
+```
+git clone git@github.com:ovavourakis/PKPy.git
+cd /path/to/PKPy/
+pip install .
+```
 
 ### Usage
 
@@ -17,7 +21,7 @@ Specify all parameters of the model to be solved in a JSON configuration file, w
     "basic_parameters" : {
         "time_span": 10000,
         "subcutaneous" : 1,
-        "dose" : [10,"continuous"]
+        "dose" : [10, "continuous"]
     },
     
     "compartment_1" : {
@@ -45,12 +49,12 @@ Specify all parameters of the model to be solved in a JSON configuration file, w
         "rate_in" : 1.0,
         "rate_out": 0.1
     }
-    ...
+...
 }
 ```
 
 Compartment names may be freely chosen, but their type must be one of `"central"`, `"subcutaneous"` and `"peripheral"`. 
-If a `"subcutaneous"`-type compartment is present, the boolean flag `"subcutaneous"` must be set to 1, otherwise, it must be set to 0.
+If a `"subcutaneous"`-type compartment is present, the boolean flag `"subcutaneous"` in the `"basic_parameters"` dictionary must be set to 1; otherwise, it must be set to 0.
 
 The `"dose"` parameter specifies the administration protocol. Specify a numeric dosage amount followed by one of `"continuous"` (for constant administration) or `"bolus"` (for one-time administration at time 0) as a list. Alternatively, specify a custom dosage protocol as an arbitrary expression containing 'x' (the time variable) as a string. Refer to any `numpy` functions as `np.`. For example:
 
