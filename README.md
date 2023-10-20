@@ -1,6 +1,6 @@
 # PKPy
 
-PKPy is a small Python package to solve simple, compartment-based pharmacokinetic models. It currently supports bolus (one-time) or continuous drug administration and arbitrary numbers of peripheral compartments. Drug can be administered directly into a central compartment, or alternatively flow first into a special subcutaneous compartment and thence into the central one.
+PKPy is a small Python package to solve simple, compartment-based pharmacokinetic models. It currently supports bolus (one-time) or continuous drug administration and an arbitrary number of peripheral compartments. Drugs can be administered directly into a central compartment, or alternatively flow first into a special subcutaneous compartment and thence into the central one.
 
 See the full documentation in the `docs/` directory.
 
@@ -50,9 +50,9 @@ Specify all parameters of the model to be solved in a JSON configuration file, w
 ```
 
 Compartment names may be freely chosen, but their type must be one of `"central"`, `"subcutaneous"` and `"peripheral"`. 
-If a `"subcutaneous"`-type compartment is present, the boolean flag `"subcutaneous"` must be set to 1, otherwise it must be set to 0.
+If a `"subcutaneous"`-type compartment is present, the boolean flag `"subcutaneous"` must be set to 1, otherwise, it must be set to 0.
 
-The `"dose"` parameter specifies the administration protocol. Specify a numeric dosage amount followed by one of `"continuous"` (for constant administration) or `"bolus"` (for one-time administration at time 0). Alternatively, specify a custom dosage protocol as an arbitraty lambda expression containing 'x' (the time variable). Refer to any `numpy` functions as `np.`. For example:
+The `"dose"` parameter specifies the administration protocol. Specify a numeric dosage amount followed by one of `"continuous"` (for constant administration) or `"bolus"` (for one-time administration at time 0). Alternatively, specify a custom dosage protocol as an arbitrary lambda expression containing 'x' (the time variable). Refer to any `numpy` functions as `np.`. For example:
 
 ```json
 "basic_parameters" : {
@@ -70,12 +70,12 @@ After specifying the model parameters in a `json` configuration as described abo
 ```python
 import PKPy as pk
 
-model = pk.Model('/path/to/model_paramters.json')
-solution_timeseries = model.solve()
-model.plot()
+model = pk.Model('/path/to/model_paramters.json') # initialise model from json
+solution_timeseries = model.solve() # solve model
+model.plot() # generate model plot
 ```
 
-This will generate a plot of individual compartment concentrations over time. Individual timeseries can then be accesessed as `solution_timeseries['compartment_name']` for further analysis.
+This will generate a plot of individual compartment concentrations over time. Individual time-series can then be accessed as `solution_timeseries['compartment_name']` for further analysis.
 
 License
 PKPy is released under the MIT License. See LICENSE for details.
