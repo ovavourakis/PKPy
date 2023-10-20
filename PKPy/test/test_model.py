@@ -3,13 +3,17 @@ import sys
 import os
 from PKPy.model import Model, Compartment
 
+
 current_dir = os.path.dirname(__file__)
 
 file = os.path.join(current_dir, "test_model_subc.json")
 
 def test_compartment_constructor():
     """
-    Test function that tests the constructor of the Compartment class.
+    Test the constructor of the Compartment class.
+    
+    This function tests the constructor of the Compartment class by creating a Compartment instance with specific data 
+    and then asserting that its attributes match the expected values.
     """
     data = {
         'name': 'Unusual',
@@ -27,6 +31,12 @@ def test_compartment_constructor():
     assert compartment.rate_out == 0.5
 
 def test_dose():
+    """
+    Test the model's dosing functionality for continuous and bolus dosing.
+    
+    This function tests the model's dosing functionality for both continuous and bolus dosing scenarios by setting the dose 
+    type, dosing at specific time points, and checking the expected results.
+    """
     model = Model(file) 
 
     model.dose_type = 'continuous'
@@ -38,6 +48,12 @@ def test_dose():
     assert model.dose(1) == 0
 
 def test_solve():
+    """
+    Test the model's solve method.
+    
+    This function tests the model's solve method and checks the result's data type. It also verifies that the result 
+    contains data for each compartment in the model over the specified time span.
+    """
     model = Model(file) 
 
     result = model.solve()
@@ -49,6 +65,12 @@ def test_solve():
 
 
 def test_ode_system_values():
+    """
+    Test the ODE system values for the model.
+    
+    This function tests the ODE system values for the model, considering different conditions based on the 
+    'is_subcutaneous' flag. It computes the expected derivatives and compares them to the calculated values.
+    """
     model = Model(file) 
 
     if model.is_subcutaneous == True:
@@ -87,4 +109,4 @@ def test_ode_system_values():
             
 if __name__ == '__main__':
     pytest.main()
-
+ 
