@@ -39,7 +39,84 @@
 <h1>Welcome to PKPy’s documentation!<a class="headerlink" href="#welcome-to-pkpy-s-documentation" title="Link to this heading">¶</a></h1>
 <div class="toctree-wrapper compound">
 </div>
-<dl class="py class" id="module-PKPy.model">
+<p>PKPy is a small Python package to solve simple, compartment-based pharmacokinetic models. It currently supports bolus (one-time) or continuous drug administration and an arbitrary number of peripheral compartments. Drugs can be administered directly into a central compartment, or alternatively flow first into a special subcutaneous compartment and thence into the central one.</p>
+<p>See the full documentation in the <code class="docutils literal notranslate"><span class="pre">docs/</span></code> directory.</p>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h2>
+<p>After cloning PKPy, you can use <code class="docutils literal notranslate"><span class="pre">pip</span></code> to install it:</p>
+<p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">/path/to/PKPy</span></code></p>
+</section>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">¶</a></h2>
+<section id="specify-your-model">
+<h3>Specify your Model<a class="headerlink" href="#specify-your-model" title="Link to this heading">¶</a></h3>
+<p>Specify all parameters of the model to be solved in a JSON configuration file, with the following structure:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;basic_parameters&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;time_span&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">10000</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;subcutaneous&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;dose&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="s2">&quot;continuous&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="p">},</span>
+
+<span class="w">    </span><span class="nt">&quot;compartment_1&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;name&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Bloodstream&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;type&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;central&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;volume&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">5000</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;initial_amount&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;rate_out&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span>
+<span class="w">    </span><span class="p">},</span>
+
+<span class="w">    </span><span class="nt">&quot;compartment_3&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;name&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Liver&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;type&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;peripheral&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;volume&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">2000</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;initial_amount&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;rate_in&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;rate_out&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.5</span>
+<span class="w">    </span><span class="p">},</span>
+
+<span class="w">    </span><span class="nt">&quot;compartment_4&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;name&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Subcutaneous&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;type&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;subcutaneous&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;volume&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">3000</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;initial_amount&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;rate_in&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;rate_out&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.1</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="err">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Compartment names may be freely chosen, but their type must be one of <code class="docutils literal notranslate"><span class="pre">&quot;central&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;subcutaneous&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;peripheral&quot;</span></code>.
+If a <code class="docutils literal notranslate"><span class="pre">&quot;subcutaneous&quot;</span></code>-type compartment is present, the boolean flag <code class="docutils literal notranslate"><span class="pre">&quot;subcutaneous&quot;</span></code> must be set to 1, otherwise, it must be set to 0.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">&quot;dose&quot;</span></code> parameter specifies the administration protocol. Specify a numeric dosage amount followed by one of <code class="docutils literal notranslate"><span class="pre">&quot;continuous&quot;</span></code> (for constant administration) or <code class="docutils literal notranslate"><span class="pre">&quot;bolus&quot;</span></code> (for one-time administration at time 0) as a list. Alternatively, specify a custom dosage protocol as an arbitrary expression containing ‘x’ (the time variable) as a string. Refer to any <code class="docutils literal notranslate"><span class="pre">numpy</span></code> functions as <code class="docutils literal notranslate"><span class="pre">np.</span></code>. For example:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="nt">&quot;basic_parameters&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;subcutaneous&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;dose&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;np.sin(x) + 100&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+</pre></div>
+</div>
+<p>See the <code class="docutils literal notranslate"><span class="pre">examples/</span></code> folder for inspiration.</p>
+</section>
+<section id="usage-from-python">
+<h3>Usage from Python<a class="headerlink" href="#usage-from-python" title="Link to this heading">¶</a></h3>
+<p>After specifying the model parameters in a <code class="docutils literal notranslate"><span class="pre">json</span></code> configuration as described above, use the package from Python, like so:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">PKPy</span> <span class="k">as</span> <span class="nn">pk</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">pk</span><span class="o">.</span><span class="n">Model</span><span class="p">(</span><span class="s1">&#39;/path/to/model_paramters.json&#39;</span><span class="p">)</span> <span class="c1"># initialise model from json</span>
+<span class="n">solution_timeseries</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span> <span class="c1"># solve model</span>
+<span class="n">model</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span> <span class="c1"># plot the results</span>
+</pre></div>
+</div>
+<p>This will generate a plot of individual compartment concentrations over time. Individual time-series can then be accessed as <code class="docutils literal notranslate"><span class="pre">solution_timeseries['compartment_name']</span></code> for further analysis.</p>
+<p>License
+PKPy is released under the MIT License. See LICENSE for details.</p>
+</section>
+</section>
+</section>
+<section id="module-PKPy.model">
+<span id="documentation-of-classes-and-functions"></span><h1>Documentation of Classes and Functions<a class="headerlink" href="#module-PKPy.model" title="Link to this heading">¶</a></h1>
+<dl class="py class">
 <dt class="sig sig-object py" id="PKPy.model.Compartment">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PKPy.model.</span></span><span class="sig-name descname"><span class="pre">Compartment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#PKPy.model.Compartment" title="Link to this definition">¶</a></dt>
 <dd><p>A class representing a compartment in a pharmacokinetic model.</p>
@@ -208,7 +285,7 @@ and also writes them out to a pickle file in the results/ directory.</p>
 
 </section>
 <section id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading">¶</a></h1>
+<h1>Indices and Tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading">¶</a></h1>
 <ul class="simple">
 <li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
 <li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
@@ -227,6 +304,15 @@ and also writes them out to a pickle file in the results/ directory.</p>
     <h3><a href="#">Table of Contents</a></h3>
     <ul>
 <li><a class="reference internal" href="#">Welcome to PKPy’s documentation!</a><ul>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#usage">Usage</a><ul>
+<li><a class="reference internal" href="#specify-your-model">Specify your Model</a></li>
+<li><a class="reference internal" href="#usage-from-python">Usage from Python</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-PKPy.model">Documentation of Classes and Functions</a><ul>
 <li><a class="reference internal" href="#PKPy.model.Compartment"><code class="docutils literal notranslate"><span class="pre">Compartment</span></code></a></li>
 <li><a class="reference internal" href="#PKPy.model.Model"><code class="docutils literal notranslate"><span class="pre">Model</span></code></a><ul>
 <li><a class="reference internal" href="#PKPy.model.Model.dose"><code class="docutils literal notranslate"><span class="pre">Model.dose()</span></code></a></li>
@@ -241,7 +327,7 @@ and also writes them out to a pickle file in the results/ directory.</p>
 </li>
 </ul>
 </li>
-<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and Tables</a></li>
 </ul>
 
   </div>

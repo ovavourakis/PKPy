@@ -1,17 +1,15 @@
-# PKPy
-
 PKPy is a small Python package to solve simple, compartment-based pharmacokinetic models. It currently supports bolus (one-time) or continuous drug administration and an arbitrary number of peripheral compartments. Drugs can be administered directly into a central compartment, or alternatively flow first into a special subcutaneous compartment and thence into the central one.
 
 See the full documentation in the `docs/` directory.
 
-# Installation
+### Installation
 After cloning PKPy, you can use `pip` to install it:
 
 `pip install /path/to/PKPy`
 
-# Usage
+### Usage
 
-## Specify your Model
+#### Specify your Model
 Specify all parameters of the model to be solved in a JSON configuration file, with the following structure:
 
 ```json
@@ -65,7 +63,7 @@ The `"dose"` parameter specifies the administration protocol. Specify a numeric 
 
 See the `examples/` folder for inspiration.
 
-## Usage from Python
+#### Usage from Python
 
 After specifying the model parameters in a `json` configuration as described above, use the package from Python, like so:
 

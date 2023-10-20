@@ -7,15 +7,19 @@ Welcome to PKPy's documentation!
 ================================
 
 .. toctree::
+
+.. mdinclude:: ../../README.md
+
+Documentation of Classes and Functions
+======================================
+
 .. automodule:: PKPy.model
    :members:
 
 .. automodule:: PKPy.system_parser
    :members:
 
-
-
-Indices and tables
+Indices and Tables
 ==================
 
 * :ref:`genindex`
