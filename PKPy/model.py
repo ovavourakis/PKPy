@@ -172,10 +172,7 @@ class Model():
 
         # Plot the full data on the main axis
         for i, j in enumerate(compartments):
-            try:
-                ax.plot(data[j], label=j, c=colors[i])
-            except:
-                ax.plot(data[j], label=j, c=self.random_color_generator())
+            ax.plot(data[j], label=j, c=colors[i])
 
         # Title 
         fig.suptitle(title, fontsize="large", y=1.05)
@@ -199,10 +196,7 @@ class Model():
 
         # Plot the zoomed in data on the left axis
         for i, j in enumerate(compartments):
-            try:
-                ax_zm.plot(data[j][zoom_start:zoom_end], label=j, c=colors[i])
-            except:
-                ax_zm.plot(data[j][zoom_start:zoom_end], label=j, c=self.random_color_generator())
+            ax_zm.plot(data[j][zoom_start:zoom_end], label=j, c=colors[i])
 
         ## LABELS
         # Show y-labels on ax_zm (zoomed axis)
