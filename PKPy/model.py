@@ -161,7 +161,7 @@ class Model():
         compartments = list(data.keys())
 
         ## COlOURS
-        colors_p = ["#091326"]#,"#84AEBF","#F29966","#BF5D39","#59211C"]
+        colors_p = ["#091326","#84AEBF","#F29966","#BF5D39","#59211C"]
         colors_gen = [self.random_color_generator() for i in range(len(compartments))]
         colors = colors_p + colors_gen
 
