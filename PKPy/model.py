@@ -6,19 +6,28 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 from .system_parser import Parser
 
 class Compartment():
-    
-    def __init__(self, dict): # name, type, volume, initial_amount, rate_in, rate_out):
+    """
+    A class representing a compartment in a pharmacokinetic model.
+
+    :ivar str name: The name of the compartment.
+    :ivar str type: The type of the compartment ('central', 'subcutaneous', or 'peripheral').
+    :ivar float volume: The volume of the compartment.
+    :ivar float initial_amount: The initial amount of substance in the compartment.
+    :ivar float rate_in: The rate of substance flowing into the compartment.
+    :ivar float rate_out: The rate of substance flowing out of the compartment.
+    """
+    def __init__(self, dict):
         """
         Initializes a Compartment object with the given dictionary of parameters.
 
-        Args:
-        - dict (dict): A dictionary containing the following keys:
+        :param dict: A dictionary containing the following keys:
             - name (str): The name of the compartment.
             - type (str): The type of the compartment.
             - volume (float): The volume of the compartment.
             - initial_amount (float): The initial amount of substance in the compartment.
-            - rate_in (float): The rate of substance flowing into the compartment.
+            - rate_in (float, optional): The rate of substance flowing into the compartment. Defaults to None.
             - rate_out (float): The rate of substance flowing out of the compartment.
+        :type dict: dict
         """
         self.name = dict['name']
         self.type = dict['type']
@@ -28,14 +37,42 @@ class Compartment():
         self.rate_out = dict['rate_out']
 
 class Model():
+    class Model():
+        """
+        A class representing a pharmacokinetic model.
+
+        :ivar str systemfile: The name of the system file (compartment definitions).
+        :ivar bool is_subcutaneous: Whether the model has a subcutaneous compartment or not.
+        :ivar float dose_constant: The dose constant.
+        :ivar str dose_type: The type dosage schedule ('bolus' or 'continuous').
+        :ivar list compartment_list: A list of compartments in the model (as Compartment objects).
+        :ivar Compartment central: The central compartment.
+        :ivar Compartment subcutaneous: The subcutaneous compartment (if present).
+        :ivar list other_compartments: A list of other (peripheral) compartments in the model.
+
+        :method __init__(self, systemfile):
+            Initializes a Model object with the given system file.
+
+        :method dose(self, t):
+            Returns the dose at time t.
+
+        :method ode_system(self, t, y):
+            Returns the system of ordinary differential equations (ODEs) that describe the model.
+
+        :method solve(self):
+            Solves the system of ODEs using scipy.integrate.solve_ivp and returns the solutions.
+
+        :method plot(self, title='PK Model', zoom_start=0, zoom_end=100, output='pk_model.png'):
+            Plots the time series data for the pharmacokinetic model.
+        """
     def __init__(self, systemfile):
         """
         Initializes a Model object with the given system file (the specification of
         the ODE system in the form of compartments of particular types ("central", 
         "subcutaneous" or "peripheral") with associated rates, volumes and initial amounts).
 
-        Args:
-        - systemfile (str): The path to the system file.
+        :param systemfile: The path to the system file.
+        :type systemfile: str
         """
         parser = Parser(systemfile)
         basic_params, compartments = parser.construct()
@@ -59,29 +96,29 @@ class Model():
         """
         Returns the dose at time t.
 
-        Args:
-        - t (float): The time at which to calculate the dose.
-
-        Returns:
-        - The dose at time t.
+        :param t: The time at which to calculate the dose.
+        :type t: float
+        :return: The dose at time t.
+        :rtype: float
+        :raises ValueError: If an invalid dose type is specified.
         """
         if self.dose_type == "continuous":
             return self.dose_constant
         elif self.dose_type == "bolus":
             return self.dose_constant if t==0 else 0
         else:
-            raise ValueError("some error occured in dose(t)")
+            raise ValueError("Invalid dose type specified.")
     
     def ode_system(self, t, y):
         """
         Returns the system of ordinary differential equations (ODEs) that describe the model.
 
-        Args:
-        - t (float): The current time.
-        - y (list): A list of the current amounts of substance in each compartment.
-
-        Returns:
-        - A list of the derivatives of the amounts of substance in each compartment.
+        :param t: The current time.
+        :type t: float
+        :param y: A list of the current amounts of substance in each compartment.
+        :type y: list
+        :return: A list of the derivatives of the amounts of substance in each compartment.
+        :rtype: list
         """
         if self.is_subcutaneous:
             central_amount, subcutaneous_amount = y[0], y[-1]
@@ -107,8 +144,8 @@ class Model():
         """
         Solves the system of ODEs using scipy.integrate.solve_ivp and returns the solutions.
 
-        Returns:
-        - A dictionary containing the timeseries for each compartment.
+        :return: A dictionary containing the timeseries for each compartment.
+        :rtype: dict
         """
         # time span to project over (change to user-input TODO)
         t_span = [0,1000]
@@ -139,6 +176,20 @@ class Model():
         return compartment_timeseries
         
     def plot(self, title='PK Model', zoom_start=0, zoom_end=100, output='pk_model.png'):       
+        """
+        Plots the time series data for the pharmacokinetic model.
+
+        :param title: Title of the plot. Default is 'PK Model'.
+        :type title: str
+        :param zoom_start: Starting timestep for the zoomed in plot. Default is 0.
+        :type zoom_start: int
+        :param zoom_end: Ending timestep for the zoomed in plot. Default is 100.
+        :type zoom_end: int
+        :param output: Output file name for the plot. Default is 'pk_model.png'.
+        :type output: str
+        :raises ValueError: If no timeseries data is found, or if the pickle file is not a dictionary.
+        """
+        
         if hasattr(self, 'timeseries'):
             data = self.timeseries
         elif os.path.exists(f'results/timeseries_{self.systemfile}.pickle'):

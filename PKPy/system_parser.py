@@ -3,8 +3,21 @@ import json
 
 class Parser:
     """
-    This class pareses system.json file and returns a list of dictionaries:
-    [basic parameters, [compartment1, compartment2]] (each element is a dictionary)
+    This class parses the system configuration file and returns a list of dictionaries.
+
+    :param system_config: The path to the system configuration file (compartment definitions).
+    :type system_config: str
+
+    :return: A list of dictionaries containing the basic parameters and compartment definitions.
+    :rtype: list
+
+    :raises ValueError: If the system configuration file is invalid.
+
+    :Example:
+
+    >>> parser = Parser('system.json')
+    >>> parser.construct()
+    [{'subcutaneous': 1, 'dose': [100, 'bolus']}, [{'name': 'Central', 'type': 'central', 'volume': 2, 'initial_amount': 0, 'rate_in': 0, 'rate_out': 0}, {'name': 'Peripheral', 'type': 'peripheral', 'volume': 1, 'initial_amount': 0, 'rate_in': 0, 'rate_out': 0}, {'name': 'Subcutaneous', 'type': 'subcutaneous', 'volume': 0.5, 'initial_amount': 0, 'rate_in': 0, 'rate_out': 0}]]
     """
 
     def __init__(self, system_config):
