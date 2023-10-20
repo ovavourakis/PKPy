@@ -51,7 +51,7 @@ def test_solve(model):
 
     for compartment in model.compartment_list:
         assert compartment.name in result
-        assert len(result[compartment.name]) == 1000
+        assert len(result[compartment.name]) == model.time_span
 
 if __name__ == '__main__':
     pytest.main()

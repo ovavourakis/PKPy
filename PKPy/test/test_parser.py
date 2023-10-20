@@ -11,12 +11,12 @@ def test_parser_for_errors(test, expected, expect_raises):
         assert Parser(test).construct() == expected
 
 
-expected_values = [[{'subcutaneous': 0, 'dose': [20, 'continuous']}, [
+expected_values = [[{'subcutaneous': 0, "time_span": 1000, 'dose': [20, 'continuous']}, [
     {'name': 'bloodstream', 'type': 'central', 'volume': 5000, 'initial_amount': 0.0,
      'rate_out': 1.0, 'rate_in': None},
     {'name': 'adipose', 'type': 'peripheral', 'volume': 1.0, 'initial_amount': 0.0,
      'rate_in': 1.0, 'rate_out': 1.0}]],
-                   [{'subcutaneous': 0, 'dose': [2, 'continuous']}, [
+                   [{'subcutaneous': 0, "time_span": 1000, 'dose': [2, 'continuous']}, [
                        {'name': 'bloodstream', 'type': 'central', 'volume': 5000, 'initial_amount': 0.0,
                         'rate_out': 1.0, 'rate_in': None},
                        {'name': 'adipose', 'type': 'peripheral', 'volume': 1.0, 'initial_amount': 0.0, 'rate_in': 1.0,
