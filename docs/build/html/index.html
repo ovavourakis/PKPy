@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Welcome to PKPy’s documentation! &#8212; PKPy 0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=4f649999" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=039e1c02" />
+    <script src="_static/documentation_options.js?v=2709fde1"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="welcome-to-pkpy-s-documentation">
+<h1>Welcome to PKPy’s documentation!<a class="headerlink" href="#welcome-to-pkpy-s-documentation" title="Link to this heading">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<dl class="py class" id="module-PKPy.model">
+<dt class="sig sig-object py" id="PKPy.model.Compartment">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PKPy.model.</span></span><span class="sig-name descname"><span class="pre">Compartment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#PKPy.model.Compartment" title="Link to this definition">¶</a></dt>
+<dd><p>A class representing a compartment in a pharmacokinetic model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – The name of the compartment.</p></li>
+<li><p><strong>type</strong> (<em>str</em>) – The type of the compartment (‘central’, ‘subcutaneous’, or ‘peripheral’).</p></li>
+<li><p><strong>volume</strong> (<em>float</em>) – The volume of the compartment.</p></li>
+<li><p><strong>initial_amount</strong> (<em>float</em>) – The initial amount of substance in the compartment.</p></li>
+<li><p><strong>rate_in</strong> (<em>float</em>) – The rate of substance flowing into the compartment.</p></li>
+<li><p><strong>rate_out</strong> (<em>float</em>) – The rate of substance flowing out of the compartment.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="PKPy.model.Model">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PKPy.model.</span></span><span class="sig-name descname"><span class="pre">Model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">systemfile</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#PKPy.model.Model" title="Link to this definition">¶</a></dt>
+<dd><p>A class representing a pharmacokinetic model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>systemfile</strong> (<em>str</em>) – The name of the system file (compartment definitions).</p></li>
+<li><p><strong>is_subcutaneous</strong> (<em>bool</em>) – Whether the model has a subcutaneous compartment or not.</p></li>
+<li><p><strong>dose_constant</strong> (<em>float</em>) – The dose constant.</p></li>
+<li><p><strong>dose_type</strong> (<em>str</em>) – The type dosage schedule (‘bolus’ or ‘continuous’).</p></li>
+<li><p><strong>compartment_list</strong> (<em>list</em>) – A list of compartments in the model (as Compartment objects).</p></li>
+<li><p><strong>central</strong> (<a class="reference internal" href="#PKPy.model.Compartment" title="PKPy.model.Compartment"><em>Compartment</em></a>) – The central compartment.</p></li>
+<li><p><strong>subcutaneous</strong> (<a class="reference internal" href="#PKPy.model.Compartment" title="PKPy.model.Compartment"><em>Compartment</em></a>) – The subcutaneous compartment (if present).</p></li>
+<li><p><strong>other_compartments</strong> (<em>list</em>) – A list of other (peripheral) compartments in the model.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Usage Example<span class="colon">:</span></dt>
+<dd class="field-even"><p></p></dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="s1">&#39;system.json&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>    <span class="c1"># outputs a plot of the model to results/</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="PKPy.model.Model.dose">
+<span class="sig-name descname"><span class="pre">dose</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#PKPy.model.Model.dose" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the dose at time t.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t</strong> (<em>float</em>) – The time at which to calculate the dose.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The dose at time t.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If an invalid dose type is specified.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="PKPy.model.Model.ode_system">
+<span class="sig-name descname"><span class="pre">ode_system</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#PKPy.model.Model.ode_system" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the system of ordinary differential equations (ODEs) that describe the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t</strong> (<em>float</em>) – The current time.</p></li>
+<li><p><strong>y</strong> (<em>list</em>) – A list of the current amounts of substance in each compartment.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of the derivatives of the amounts of substance in each compartment.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="PKPy.model.Model.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'PK</span> <span class="pre">Model'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zoom_start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zoom_end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pk_model.png'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#PKPy.model.Model.plot" title="Link to this definition">¶</a></dt>
+<dd><p>Plots the time series data for the pharmacokinetic model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>title</strong> (<em>str</em>) – Title of the plot. Default is ‘PK Model’.</p></li>
+<li><p><strong>zoom_start</strong> (<em>int</em>) – Starting timestep for the zoomed in plot. Default is 0.</p></li>
+<li><p><strong>zoom_end</strong> (<em>int</em>) – Ending timestep for the zoomed in plot. Default is 100.</p></li>
+<li><p><strong>output</strong> (<em>str</em>) – Output file name for the plot. Default is ‘pk_model.png’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If no timeseries data is found, or if the pickle file is not a dictionary.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="PKPy.model.Model.solve">
+<span class="sig-name descname"><span class="pre">solve</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#PKPy.model.Model.solve" title="Link to this definition">¶</a></dt>
+<dd><p>Solves the system of ODEs using scipy.integrate.solve_ivp and returns the solutions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A dictionary containing the timeseries for each compartment.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class" id="module-PKPy.system_parser">
+<dt class="sig sig-object py" id="PKPy.system_parser.Parser">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PKPy.system_parser.</span></span><span class="sig-name descname"><span class="pre">Parser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">system_config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#PKPy.system_parser.Parser" title="Link to this definition">¶</a></dt>
+<dd><p>This class parses and stores the system configuration from a user-provided config file (compartment definitions).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>system_config</strong> (<em>str</em>) – The path to the system configuration file (compartment definitions).</p>
+</dd>
+<dt class="field-even">Usage Example<span class="colon">:</span></dt>
+<dd class="field-even"><p></p></dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">parser</span> <span class="o">=</span> <span class="n">Parser</span><span class="p">(</span><span class="s1">&#39;system.json&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parser</span><span class="o">.</span><span class="n">construct</span><span class="p">()</span>
+<span class="go">[{&#39;subcutaneous&#39;: 1, &#39;dose&#39;: [100, &#39;bolus&#39;]}, [{&#39;name&#39;: &#39;Central&#39;, &#39;type&#39;: &#39;central&#39;, &#39;volume&#39;: 2, &#39;initial_amount&#39;: 0, &#39;rate_in&#39;: 0, &#39;rate_out&#39;: 0}, {&#39;name&#39;: &#39;Peripheral&#39;, &#39;type&#39;: &#39;peripheral&#39;, &#39;volume&#39;: 1, &#39;initial_amount&#39;: 0, &#39;rate_in&#39;: 0, &#39;rate_out&#39;: 0}, {&#39;name&#39;: &#39;Subcutaneous&#39;, &#39;type&#39;: &#39;subcutaneous&#39;, &#39;volume&#39;: 0.5, &#39;initial_amount&#39;: 0, &#39;rate_in&#39;: 0, &#39;rate_out&#39;: 0}]]</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="PKPy.system_parser.Parser.construct">
+<span class="sig-name descname"><span class="pre">construct</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#PKPy.system_parser.Parser.construct" title="Link to this definition">¶</a></dt>
+<dd><p>For an initialised Parser object, this method constructs and returns the system configuration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list, containing, in this order, the basic parameters (as a dictionary) and individual compartment parameters (a list of dictionaries).</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ValueError</strong> – If the subcutaneous flag is set to True, the corresponding compartment must also be defined and vice versa.</p></li>
+<li><p><strong>ValueError</strong> – If drug dosage is not a positive number.</p></li>
+<li><p><strong>ValueError</strong> – If drug administration type is not ‘bolus’ or ‘continuous’.</p></li>
+<li><p><strong>ValueError</strong> – If there is not exactly one compartment with a ‘central’ type.</p></li>
+<li><p><strong>ValueError</strong> – If there is more than one compartment with a ‘subcutaneous’ type.</p></li>
+<li><p><strong>ValueError</strong> – If a compartment has a type other than ‘central’, ‘subcutaneous’, or ‘peripheral’.</p></li>
+<li><p><strong>ValueError</strong> – If the volume of a compartment is not a positive number.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="#">PKPy</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, James Broster, Ronald Cvek, Hamlet Khachatryan, Odysseas Vavourakis.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

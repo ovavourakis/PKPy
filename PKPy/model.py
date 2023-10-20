@@ -37,34 +37,24 @@ class Compartment():
         self.rate_out = dict['rate_out']
 
 class Model():
-    class Model():
-        """
-        A class representing a pharmacokinetic model.
+    """
+    A class representing a pharmacokinetic model.
 
-        :ivar str systemfile: The name of the system file (compartment definitions).
-        :ivar bool is_subcutaneous: Whether the model has a subcutaneous compartment or not.
-        :ivar float dose_constant: The dose constant.
-        :ivar str dose_type: The type dosage schedule ('bolus' or 'continuous').
-        :ivar list compartment_list: A list of compartments in the model (as Compartment objects).
-        :ivar Compartment central: The central compartment.
-        :ivar Compartment subcutaneous: The subcutaneous compartment (if present).
-        :ivar list other_compartments: A list of other (peripheral) compartments in the model.
+    :ivar str systemfile: The name of the system file (compartment definitions).
+    :ivar bool is_subcutaneous: Whether the model has a subcutaneous compartment or not.
+    :ivar float dose_constant: The dose constant.
+    :ivar str dose_type: The type dosage schedule ('bolus' or 'continuous').
+    :ivar list compartment_list: A list of compartments in the model (as Compartment objects).
+    :ivar Compartment central: The central compartment.
+    :ivar Compartment subcutaneous: The subcutaneous compartment (if present).
+    :ivar list other_compartments: A list of other (peripheral) compartments in the model.
 
-        :method __init__(self, systemfile):
-            Initializes a Model object with the given system file.
+    :Usage Example:
 
-        :method dose(self, t):
-            Returns the dose at time t.
-
-        :method ode_system(self, t, y):
-            Returns the system of ordinary differential equations (ODEs) that describe the model.
-
-        :method solve(self):
-            Solves the system of ODEs using scipy.integrate.solve_ivp and returns the solutions.
-
-        :method plot(self, title='PK Model', zoom_start=0, zoom_end=100, output='pk_model.png'):
-            Plots the time series data for the pharmacokinetic model.
-        """
+    >>> model = Model('system.json')
+    >>> model.solve()
+    >>> model.plot()    # outputs a plot of the model to results/
+    """
     def __init__(self, systemfile):
         """
         Initializes a Model object with the given system file (the specification of
