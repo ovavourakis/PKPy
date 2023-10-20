@@ -34,7 +34,7 @@ Specify all parameters of the model to be solved in a JSON configuration file, w
         "rate_out": 10
     },
 
-    "compartment_3" : {
+    "compartment_2" : {
         "name" : "Liver",
         "type" : "peripheral",
         "volume" : 2000,
@@ -43,7 +43,7 @@ Specify all parameters of the model to be solved in a JSON configuration file, w
         "rate_out": 0.5
     },
 
-    "compartment_4" : {
+    "compartment_3" : {
         "name" : "Subcutaneous",
         "type" : "subcutaneous",
         "volume" : 3000,
