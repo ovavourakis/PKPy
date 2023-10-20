@@ -175,7 +175,7 @@ class Model():
         
     def plot(self, title='PK Model', zoom_start=0, zoom_end=100, output='pk_model.png'):       
         """
-        Plots the time series data for the pharmacokinetic model.
+        Plots the time-series data for the PK model.
 
         :param title: Title of the plot. Default is 'PK Model'.
         :type title: str
