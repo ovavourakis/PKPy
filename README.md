@@ -54,7 +54,7 @@ Specify all parameters of the model to be solved in a JSON configuration file, w
 Compartment names may be freely chosen, but their type must be one of `"central"`, `"subcutaneous"` and `"peripheral"`. 
 If a `"subcutaneous"`-type compartment is present, the boolean flag `"subcutaneous"` must be set to 1, otherwise, it must be set to 0.
 
-The `"dose"` parameter specifies the administration protocol. Specify a numeric dosage amount followed by one of `"continuous"` (for constant administration) or `"bolus"` (for one-time administration at time 0). Alternatively, specify a custom dosage protocol as an arbitrary lambda expression containing 'x' (the time variable). Refer to any `numpy` functions as `np.`. For example:
+The `"dose"` parameter specifies the administration protocol. Specify a numeric dosage amount followed by one of `"continuous"` (for constant administration) or `"bolus"` (for one-time administration at time 0) as a list. Alternatively, specify a custom dosage protocol as an arbitrary expression containing 'x' (the time variable) as a string. Refer to any `numpy` functions as `np.`. For example:
 
 ```json
 "basic_parameters" : {
@@ -74,7 +74,7 @@ import PKPy as pk
 
 model = pk.Model('/path/to/model_paramters.json') # initialise model from json
 solution_timeseries = model.solve() # solve model
-model.plot() # generate model plot
+model.plot() # plot the results
 ```
 
 This will generate a plot of individual compartment concentrations over time. Individual time-series can then be accessed as `solution_timeseries['compartment_name']` for further analysis.
