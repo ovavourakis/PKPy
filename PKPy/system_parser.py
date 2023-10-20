@@ -36,6 +36,8 @@ class Parser:
                              "defined and vice versa.")
         if type(basic_pars['dose'][0]) not in [int, float] or basic_pars['dose'][0] <= 0:
             raise ValueError("Drug dosage must be positive number.")
+        if not isinstance(basic_pars['time_span'], int) or basic_pars['time_span'] <= 0:
+            raise ValueError("Time span must be positive integer.")
         if basic_pars['dose'][1] not in ["bolus", "continuous"]:
             raise ValueError("Drug administration type must be 'bolus' or 'continuous'")
         if [i['type'] for i in compartments_sorted].count('central') != 1:

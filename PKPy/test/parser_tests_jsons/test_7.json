@@ -1,6 +1,7 @@
 {
     "basic_parameters" : {
         "subcutaneous" : 0,
+        "time_span": 1000,
         "dose" : [20,"continuous"]
     },
 

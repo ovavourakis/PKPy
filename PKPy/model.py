@@ -43,6 +43,7 @@ class Model():
         # basic parameters
         self.systemfile = systemfile.split('/')[-1].split('.')[0]
         self.is_subcutaneous = basic_params['subcutaneous']         # boolean
+        self.time_span = basic_params['time_span']                  # int
         self.dose_constant = basic_params['dose'][0]                # amount
         self.dose_type = basic_params['dose'][1]                    # dosage schedule
 
@@ -68,9 +69,9 @@ class Model():
         if self.dose_type == "continuous":
             return self.dose_constant
         elif self.dose_type == "bolus":
-            return self.dose_constant if t==0 else 0
+            return self.dose_constant if t == 0 else 0
         else:
-            raise ValueError("some error occured in dose(t)")
+            raise ValueError("some error occurred in dose(t)")
     
     def ode_system(self, t, y):
         """
@@ -111,8 +112,8 @@ class Model():
         - A dictionary containing the timeseries for each compartment.
         """
         # time span to project over (change to user-input TODO)
-        t_span = [0, 10000]
-        t_eval = np.arange(0, 10000, 1)
+        t_span = [0, self.time_span]
+        t_eval = np.arange(0, self.time_span, 1)
 
         # define initial conditions
         if self.is_subcutaneous:
@@ -122,7 +123,7 @@ class Model():
             y0 = [self.central.initial_amount]
             y0.extend([c.initial_amount for c in self.other_compartments])
 
-        sol = scipy.integrate.solve_ivp(self.ode_system, t_span, y0, t_eval=t_eval, method = 'RK45')
+        sol = scipy.integrate.solve_ivp(self.ode_system, t_span, y0, t_eval=t_eval, method='RK45')
 
         compartment_timeseries = {}
         for i, C in enumerate(self.compartment_list):
@@ -141,7 +142,7 @@ class Model():
         color = np.random.randint(0, 256, size=3)
         return tuple(color/255)
         
-    def plot(self, title='PK Model', zoom_start=0, zoom_end=100, output='pk_model.png'):
+    def plot(self, title='PK Model', zoom_start=0, zoom_end=300, output='pk_model.png'):
         if hasattr(self, 'timeseries'):
             data = self.timeseries
         elif os.path.exists(f'results/timeseries_{self.systemfile}.pickle'):
