@@ -1,7 +1,7 @@
 {
     "basic_parameters" : {
         "subcutaneous" : 1,
-        "dose" : [1000,"continuous"]
+        "dose" : [20,"continuous"]
     },
 
     "compartment_1" : {
@@ -17,19 +17,11 @@
         "type" : "subcutaneous",
         "volume" : 400,
         "initial_amount" : 0.0,
-        "rate_out": 1.0
+        "rate_out": 2.0
     },
+
 
     "compartment_3" : {
-        "name" : "adipose",
-        "type" : "peripheral",
-        "volume" : 2000,
-        "initial_amount" : 0.0,
-        "rate_in" : 1.0,
-        "rate_out": 1.0
-    },
-
-    "compartment_4" : {
         "name" : "liver",
         "type" : "peripheral",
         "volume" : 300,
