@@ -53,10 +53,8 @@ Specify all parameters of the model to be solved in a JSON configuration file, w
 }
 ```
 
-Compartment names may be freely chosen, but their type must be one of `"central"`, `"subcutaneous"` and `"peripheral"`. 
-If a `"subcutaneous"`-type compartment is present, the boolean flag `"subcutaneous"` in the `"basic_parameters"` dictionary must be set to 1; otherwise, it must be set to 0.
-
-The `"dose"` parameter specifies the administration protocol. Specify a numeric dosage amount followed by one of `"continuous"` (for constant administration) or `"bolus"` (for one-time administration at time 0) as a list. Alternatively, specify a custom dosage protocol as an arbitrary expression containing 'x' (the time variable) as a string. Refer to any `numpy` functions as `np.`. For example:
+In `"basic_parameters"`, you specify the desired time-span for which to propagate the system with `"time_span"`. The `"dose"` parameter specifies the administration protocol as a list; you may pass a numeric dosage amount as the first list item, followed by one of `"continuous"` (for constant administration) or `"bolus"` (for one-time administration at time 0). 
+Alternatively, specify a custom dosage protocol as an arbitrary function of time 'x' as a string. Refer to any `numpy` functions as `np.`. For example:
 
 ```json
 "basic_parameters" : {
@@ -64,6 +62,9 @@ The `"dose"` parameter specifies the administration protocol. Specify a numeric 
         "dose" : "np.sin(x) + 100"
     }
 ```
+
+Compartment names may be freely chosen, but their type must be one of `"central"`, `"subcutaneous"` and `"peripheral"`. 
+If a `"subcutaneous"`-type compartment is present, the boolean flag `"subcutaneous"` in the `"basic_parameters"` dictionary must be set to 1; otherwise, it must be set to 0.
 
 See the `examples/` folder for inspiration.
 
@@ -79,7 +80,7 @@ solution_timeseries = model.solve() # solve model
 model.plot() # plot the results
 ```
 
-This will generate a plot of individual compartment concentrations over time. Individual time-series can then be accessed as `solution_timeseries['compartment_name']` for further analysis.
+This will generate a plot of individual compartment concentrations over time. Individual time-series can then be accessed from within `Python` as `solution_timeseries['compartment_name']` for further analysis.
 
 License
 PKPy is released under the MIT License. See LICENSE for details.
