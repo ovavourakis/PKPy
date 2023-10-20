@@ -42,6 +42,7 @@ class Model():
 
         # basic parameters
         self.systemfile = systemfile.split('/')[-1].split('.')[0]
+        self.initiation_time = datetime.datetime.now().strftime("%Y_%m_%d-%H_%M_%S") # time of model initiation
         self.is_subcutaneous = basic_params['subcutaneous']         # boolean
         self.time_span = basic_params['time_span']                  # int
         self.dose_constant = basic_params['dose'][0]                # amount
@@ -130,7 +131,7 @@ class Model():
             compartment_timeseries[C.name] = sol.y[i]
 
         os.makedirs('results/', exist_ok=True)
-        with open(f'results/timeseries_{self.systemfile}.pickle', 'wb') as f:
+        with open(f'results/timeseries_{self.initiation_time}.pickle', 'wb') as f:
             pickle.dump(compartment_timeseries, f)
 
         self.timeseries = compartment_timeseries
@@ -145,11 +146,11 @@ class Model():
     def plot(self, title='PK Model', zoom_start=0, zoom_end=300, output='pk_model.png'):
         if hasattr(self, 'timeseries'):
             data = self.timeseries
-        elif os.path.exists(f'results/timeseries_{self.systemfile}.pickle'):
-            with open(f'results/timeseries_{self.systemfile}.pickle', 'rb') as handle:
+        elif os.path.exists(f'results/timeseries_{self.initiation_time}.pickle'):
+            with open(f'results/timeseries_{self.initiation_time}.pickle', 'rb') as handle:
                 data = pickle.load(handle)
                 if type(data) != dict:
-                    raise ValueError(f"Pickle file 'results/timeseries_{self.systemfile}.pickle' is not a dictionary.")
+                    raise ValueError(f"Pickle file 'results/timeseries_{self.initiation_time}.pickle' is not a dictionary.")
         else:   
             raise ValueError("No timeseries data found. Please run solve() first.")
         
