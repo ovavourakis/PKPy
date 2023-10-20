@@ -87,7 +87,8 @@ class Model():
 
     def dose(self,t):
         """
-        Returns the dose at time t.
+        Returns the dose at time t using dosage function specified by the user. 
+        The options are:
 
         :param t: The time at which to calculate the dose.
         :type t: float
@@ -100,7 +101,8 @@ class Model():
         elif self.dose_type == "bolus":
             return self.dose_constant if t == 0 else 0
         else:
-            raise ValueError("Invalid dose type specified.")
+            dosage_function = lambda x: eval(self.dose_type)
+            return dosage_function(t)
     
     def ode_system(self, t, y):
         """
@@ -141,7 +143,6 @@ class Model():
         :return: A dictionary containing the timeseries for each compartment.
         :rtype: dict
         """
-        # time span to project over (change to user-input TODO)
         t_span = [0, self.time_span]
         t_eval = np.arange(0, self.time_span, 1)
 
@@ -174,7 +175,7 @@ class Model():
         
     def plot(self, title='PK Model', zoom_start=0, zoom_end=100, output='pk_model.png'):       
         """
-        Plots the time series data for the pharmacokinetic model.
+        Plots the time-series data for the PK model.
 
         :param title: Title of the plot. Default is 'PK Model'.
         :type title: str

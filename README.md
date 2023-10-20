@@ -52,7 +52,14 @@ Specify all parameters of the model to be solved in a JSON configuration file, w
 Compartment names may be freely chosen, but their type must be one of `"central"`, `"subcutaneous"` and `"peripheral"`. 
 If a `"subcutaneous"`-type compartment is present, the boolean flag `"subcutaneous"` must be set to 1, otherwise it must be set to 0.
 
-The `"dose"` parameter specifies the administration protocol. Specify a numeric dosage amount followed by one of `"continuous"` (for constant administration) or `"bolus"` (for one-time administration at time 0).
+The `"dose"` parameter specifies the administration protocol. Specify a numeric dosage amount followed by one of `"continuous"` (for constant administration) or `"bolus"` (for one-time administration at time 0). Alternatively, specify a custom dosage protocol as an arbitraty lambda expression containing 'x' (the time variable). Refer to any `numpy` functions as `np.`. For example:
+
+```json
+"basic_parameters" : {
+        "subcutaneous" : 1,
+        "dose" : "np.sin(x) + 100"
+    }
+```
 
 See the `examples/` folder for inspiration.
 

@@ -1,4 +1,5 @@
 import json
+import numpy as np
 
 
 class Parser:
@@ -56,7 +57,7 @@ class Parser:
                 {"name", "type", "volume", "initial_amount", "rate_in", "rate_out"} - set(i.keys()))
             if len(missing_attributes) != 0:
                 for attribute in missing_attributes:
-                    i.update({attribute: None})               # Adding missing parameters
+                    i.update({attribute: None})  # Adding missing parameters
 
         # Testing for wrong system_config files
         if ((basic_pars['subcutaneous'] == 1 and compartments_sorted[-1]['type'] != 'subcutaneous') or
@@ -67,8 +68,14 @@ class Parser:
             raise ValueError("Drug dosage must be positive number.")
         if not isinstance(basic_pars['time_span'], int) or basic_pars['time_span'] <= 0:
             raise ValueError("Time span must be positive integer.")
-        if basic_pars['dose'][1] not in ["bolus", "continuous"]:
-            raise ValueError("Drug administration type must be 'bolus' or 'continuous'")
+        # print(eval(basic_pars['dose'][1]))
+        try:
+            dosage_func = lambda x: eval(basic_pars['dose'][1])
+            dosage_func(10)
+        except:
+            if basic_pars['dose'][1] not in ["bolus", "continuous"]:
+                raise ValueError("Drug administration type must be 'bolus' or 'continuous' or a function expression "
+                                 "like 'np.cos(x +3)'")
         if [i['type'] for i in compartments_sorted].count('central') != 1:
             raise ValueError("One and only one of the compartments must have a 'central' type")
         if [i['type'] for i in compartments_sorted].count('subcutaneous') > 1:
