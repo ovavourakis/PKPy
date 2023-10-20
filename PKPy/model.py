@@ -91,6 +91,7 @@ class Model():
             other_amounts = y[1:-1]
         else:
             central_amount, *other_amounts = y
+            15.0, [3.0]
 
         # calculate derivatives for peripheral compartments
         derivatives = []

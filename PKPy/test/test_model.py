@@ -1,10 +1,11 @@
 import pytest
 import sys
+import os
 from PKPy.model import Model, Compartment
 
-@pytest.fixture
-def model():
-    return Model("PKPy/test/test_model.json")
+current_dir = os.path.dirname(__file__)
+
+file = os.path.join(current_dir, "test_model_subc.json")
 
 def test_compartment_constructor():
     data = {
@@ -22,7 +23,9 @@ def test_compartment_constructor():
     assert compartment.rate_in is None
     assert compartment.rate_out == 0.5
 
-def test_dose(model):
+def test_dose():
+    model = Model(file) 
+
     model.dose_type = 'continuous'
     assert model.dose(0) == model.dose_constant
     assert model.dose(1) == model.dose_constant
@@ -31,21 +34,9 @@ def test_dose(model):
     assert model.dose(0) == model.dose_constant
     assert model.dose(1) == 0
 
-def test_ode_system(model):
-    y = [15, 3, 6, 9]
-    t = 5
+def test_solve():
+    model = Model(file) 
 
-    model.is_subcutaneous = True
-    deriv = model.ode_system(t, y)
-    assert len(deriv) == 4
-    assert all(isinstance(val, float) for val in deriv)
-
-    model.is_subcutaneous = False
-    deriv = model.ode_system(t, y)
-    assert len(deriv) == 3
-    assert all(isinstance(val, float) for val in deriv)
-
-def test_solve(model):
     result = model.solve()
     assert isinstance(result, dict)
 
@@ -53,6 +44,44 @@ def test_solve(model):
         assert compartment.name in result
         assert len(result[compartment.name]) == model.time_span
 
+
+def test_ode_system_values():
+    model = Model(file) 
+
+    if model.is_subcutaneous == True:
+        initial_values = [15.0, 3.0, 9.0]
+        t = 5.0
+
+        deriv = model.ode_system(t, initial_values)
+
+        expected_derivatives = [
+            2.0 * 9.0 - ((15.0 / 600.0) * 1.0) - 1.0 * ((15.0 / 600.0 - 3.0 / 300)),  # central compartment
+            1.0 * (15.0 / 600.0 - 3.0 / 300),  # liver peripheral compartment
+            20 - 2 * 9.0  #subcutaneous compartment 
+        ]
+        print(expected_derivatives)
+        print(deriv)
+        assert all(isinstance(val, float) for val in deriv)
+        assert len(deriv) == len(expected_derivatives)
+        for val, expected_val in zip(deriv, expected_derivatives):
+            assert val == expected_val
+
+    else:
+        initial_values = [15.0, 3.0]
+        t = 5.0
+
+        deriv = model.ode_system(t, initial_values)
+
+        expected_derivatives = [
+            20 - (15.0 / 600) - 1.0 * (15.0 / 600.0 - 3.0 / 300), #Central compartment
+            1.0 * (15.0 / 600.0 - 3.0 / 300.0)  # liver peripheral compartment
+        ]
+
+        assert all(isinstance(val, float) for val in deriv)
+        assert len(deriv) == len(expected_derivatives)
+        for val, expected_val in zip(deriv, expected_derivatives):
+            assert val == expected_val
+            
 if __name__ == '__main__':
     pytest.main()
 
