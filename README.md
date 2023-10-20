@@ -17,33 +17,35 @@ Specify all parameters of the model to be solved in a JSON configuration file, w
 ```json
 {
     "basic_parameters" : {
+        "time_span": 10000,
         "subcutaneous" : 1,
-        "dose" : [1000,"continuous"]
+        "dose" : [10,"continuous"]
     },
-
+    
     "compartment_1" : {
-        "name" : "bloodstream",
+        "name" : "Bloodstream",
         "type" : "central",
-        "volume" : 600,
+        "volume" : 5000,
         "initial_amount" : 0.0,
-        "rate_out": 1.0
-    },
-
-    "compartment_2" : {
-        "name" : "subcutaneous",
-        "type" : "subcutaneous",
-        "volume" : 400,
-        "initial_amount" : 0.0,
-        "rate_out": 1.0
+        "rate_out": 10
     },
 
     "compartment_3" : {
-        "name" : "adipose",
+        "name" : "Liver",
         "type" : "peripheral",
         "volume" : 2000,
         "initial_amount" : 0.0,
         "rate_in" : 1.0,
-        "rate_out": 1.0
+        "rate_out": 0.5
+    },
+
+    "compartment_4" : {
+        "name" : "Subcutaneous",
+        "type" : "subcutaneous",
+        "volume" : 3000,
+        "initial_amount" : 0.0,
+        "rate_in" : 1.0,
+        "rate_out": 0.1
     }
     ...
 }
