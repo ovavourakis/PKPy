@@ -43,6 +43,7 @@ class Model():
         # basic parameters
         self.systemfile = systemfile.split('/')[-1].split('.')[0]
         self.is_subcutaneous = basic_params['subcutaneous']         # boolean
+        self.time_span = basic_params['time_span']                  # int
         self.dose_constant = basic_params['dose'][0]                # amount
         self.dose_type = basic_params['dose'][1]                    # dosage schedule
 
@@ -68,9 +69,9 @@ class Model():
         if self.dose_type == "continuous":
             return self.dose_constant
         elif self.dose_type == "bolus":
-            return self.dose_constant if t==0 else 0
+            return self.dose_constant if t == 0 else 0
         else:
-            raise ValueError("some error occured in dose(t)")
+            raise ValueError("some error occurred in dose(t)")
     
     def ode_system(self, t, y):
         """
@@ -97,11 +98,11 @@ class Model():
             derivatives.append(deriv)
         # calculate derivative for subcutaneous and central compartments
         if self.is_subcutaneous:
-            der_central = self.subcutaneous.rate_out * subcutaneous_amount -central_amount / self.central.volume * self.central.rate_out - sum(derivatives)
+            der_central = self.subcutaneous.rate_out * subcutaneous_amount - (central_amount * self.central.rate_out) /self.central.volume - sum(derivatives)
             der_subcutaneous = self.dose(t) - self.subcutaneous.rate_out * subcutaneous_amount
             return [der_central] + derivatives + [der_subcutaneous]
         else:
-            der_central = self.dose(t) - central_amount/ self.central.volume * self.central.rate_out - sum(derivatives)
+            der_central = self.dose(t) - (central_amount * self.central.rate_out) / self.central.volume - sum(derivatives)
             return [der_central] + derivatives
 
     def solve(self):
@@ -112,20 +113,18 @@ class Model():
         - A dictionary containing the timeseries for each compartment.
         """
         # time span to project over (change to user-input TODO)
-        t_span = [0,1000]
-        t_eval = np.linspace(t_span[0],t_span[1],1000)
-        
+        t_span = [0, self.time_span]
+        t_eval = np.arange(0, self.time_span, 1)
+
         # define initial conditions
         if self.is_subcutaneous:
             y0 = [self.central.initial_amount, self.subcutaneous.initial_amount]
-            for c in self.other_compartments:
-                y0.append(c.initial_amount)
+            y0.extend([c.initial_amount for c in self.other_compartments])
         else:
             y0 = [self.central.initial_amount]
-            for c in self.other_compartments:
-                y0.append(c.initial_amount)
+            y0.extend([c.initial_amount for c in self.other_compartments])
 
-        sol = scipy.integrate.solve_ivp(self.ode_system, t_span, y0, t_eval=t_eval)
+        sol = scipy.integrate.solve_ivp(self.ode_system, t_span, y0, t_eval=t_eval, method='RK45')
 
         compartment_timeseries = {}
         for i, C in enumerate(self.compartment_list):
@@ -138,8 +137,13 @@ class Model():
         self.timeseries = compartment_timeseries
 
         return compartment_timeseries
+
+    @staticmethod
+    def random_color_generator():
+        color = np.random.randint(0, 256, size=3)
+        return tuple(color/255)
         
-    def plot(self, title='PK Model', zoom_start=0, zoom_end=100, output='pk_model.png'):       
+    def plot(self, title='PK Model', zoom_start=0, zoom_end=300, output='pk_model.png'):
         if hasattr(self, 'timeseries'):
             data = self.timeseries
         elif os.path.exists(f'results/timeseries_{self.systemfile}.pickle'):
@@ -157,8 +161,11 @@ class Model():
         # Get the compartments from the data
         compartments = list(data.keys())
 
-        ## COLORS
-        colors = ["#091326","#84AEBF","#F29966","#BF5D39","#59211C"]    
+        ## COlOURS
+        colors_p = ["#091326","#84AEBF","#F29966","#BF5D39","#59211C"]
+        colors_gen = [self.random_color_generator() for i in range(len(compartments))]
+        colors = colors_p + colors_gen
+
 
         ## FIGURE
         # Create figure
@@ -166,44 +173,41 @@ class Model():
 
         # Plot the full data on the main axis
         for i, j in enumerate(compartments):
-            # Exceptions for more than 5 compartments (colors)
-            try:
-                ax.plot(data[j], label=j, c=colors[i])
-            except:
-                ax.plot(data[j], label=j)
+            ax.plot(data[j], label=j, c=colors[i])
 
         # Title 
         fig.suptitle(title, fontsize="large", y=1.05)
 
         ## MAIN AXIS TICKS
+        # Set y-axis ticks on the right side of the plot
+        ax.yaxis.tick_right()
+        
         # Turn off y tick labels and yaxis on axm (main axis/plot)
-        axm = ax.axes.get_yaxis()
-        axm.set_visible(False)
-        axm.set_minor_locator(plt.NullLocator())
+        # axm = ax.axes.get_yaxis()
+        # axm.set_visible(False)
+        # axm.set_minor_locator(plt.NullLocator())
 
         ## LEFT ZOOMED AXIS
         # Create new axes on the left of the current axes
         divider = make_axes_locatable(ax)
-        ax_zm = divider.append_axes("left", 2, pad=0.2, sharey=ax)
+        ax_zm = divider.append_axes("left", 2, pad=0.2)
         ax_zm.set_title('Zoomed in', fontsize="medium")
+        ax_zm.set_ylim(-25, 50*self.dose_constant)
         ax.set_title('Full Plot', fontsize="medium")
 
         # Plot the zoomed in data on the left axis
         for i, j in enumerate(compartments):
-            # Exceptions for more than 5 compartments (colors)
-            try:
-                ax_zm.plot(data[j][zoom_start:zoom_end], label=j, c=colors[i])
-            except:
-                ax_zm.plot(data[j][zoom_start:zoom_end], label=j)
+            ax_zm.plot(data[j][zoom_start:zoom_end], label=j, c=colors[i])
 
         ## LABELS
         # Show y-labels on ax_zm (zoomed axis)
         ax_zm.set_ylabel('Concentration (mg/L)', fontsize="medium")
         ax_zm.set_xlabel('Timestep', fontsize="medium")
         ax.set_xlabel('Timestep', fontsize="medium")
+
         # Show legend
-        ax.legend(loc='upper left', fontsize="x-small", frameon=False) # full plot
-        #ax_zm.legend(loc='upper left', fontsize="x-small", frameon=False)  # zoomed plot
+        ax.legend(loc='upper left', fontsize="x-small", frameon=False) # full plot # 
+
 
         # Save the figure
         plt.savefig(output, dpi=300, bbox_inches='tight')

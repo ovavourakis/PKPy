@@ -37,7 +37,7 @@ def get_compartments(data):
 
 
 # Generate an overall plot for the compartments
-def combined_plot(data, title='PK Model', zoom_start=0, zoom_end=100, output='pk_model.png'):
+def combined_plot(data, title='PK Model', zoom_start=0, zoom_end=1000, output='pk_model.png'):
     """
     Generate a plot of the PK model.
 
@@ -107,7 +107,6 @@ def combined_plot(data, title='PK Model', zoom_start=0, zoom_end=100, output='pk
     ax.set_xlabel('Timestep', fontsize="medium")
     # Show legend
     ax.legend(loc='upper left', fontsize="x-small", frameon=False) # full plot
-    #ax_zm.legend(loc='upper left', fontsize="x-small", frameon=False)  # zoomed plot
 
     # Save the figure
     plt.savefig(output, dpi=300, bbox_inches='tight')

@@ -4,4 +4,5 @@ if __name__ == "__main__":
 
     model = pk.Model('system.json')
     timeseries = model.solve()
-    print(timeseries)
+    #print(timeseries)
+    model.plot()

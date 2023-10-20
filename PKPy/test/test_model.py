@@ -42,7 +42,7 @@ def test_solve():
 
     for compartment in model.compartment_list:
         assert compartment.name in result
-        assert len(result[compartment.name]) == self.time_span
+        assert len(result[compartment.name]) == model.time_span
 
 
 def test_ode_system_values():
